@@ -4,6 +4,10 @@ One-liner: An agentic AI platform that detects global supply chain threats in re
 
 This is not a dashboard. This is not a risk score. This is a system that acts.
 
+## Live Demo
+
+https://supply-chain-logistics.vercel.app/
+
 ## Executive Summary
 
 NexusGuard is positioned at the intersection of:
@@ -280,7 +284,6 @@ pnpm install
 pnpm dev
 ```
 
-4. Open [(https://supply-chain-logistics.vercel.app)]
 ## 📄 License
 
 This project is licensed under the MIT License.
