@@ -253,7 +253,58 @@
 }
 
 .animate-ticker {
-  animation: tickerScroll 40s linear infinite;
+  animation: tickerScroll 30s linear infinite;
+}
+
+@keyframes tickerFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes tickerGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes dataSheen {
+  0% {
+    opacity: 0.25;
+    transform: translateX(-16%);
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.25;
+    transform: translateX(16%);
+  }
+}
+
+.animate-ticker-glow {
+  animation: tickerGlow 6.5s ease-in-out infinite;
+}
+
+.animate-data-sheen {
+  animation: dataSheen 4.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker,
+  .animate-ticker-glow,
+  .animate-data-sheen {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
 }
 
 /* Subtle scanning line across hero */
