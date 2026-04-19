@@ -1,104 +1,77 @@
-# Agentic Supply Chain War Room
+# R3FLEX
 
-A unified detection layer and autonomous command center for global supply chain operations. This platform leverages Agentic AI to monitor, triage, and resolve high-priority logistics disruptions in real-time.
+<p align="center">
+    <img src="./public/trelfex.png" alt="R3FLEX platform preview" width="74%" />
+</p>
 
-## 🚀 Overview
+<p align="center">
+    <strong>Agentic supply chain command center.</strong><br />
+    Real-time disruption intelligence, autonomous triage, and human-governed execution.
+</p>
 
-The **Agentic Supply Chain War Room** is designed to transform traditional supply chain management from reactive reporting to autonomous execution. By ingesting billions of global events, the platform provides a "single pane of glass" for logistics, trade compliance, and threat intelligence.
+---
 
-### Key Pillars
-- **Autonomous Execution:** AI agents move beyond insights to execute actions across ERP, WMS, and TMS systems.
-- **Global Visibility:** Real-time tracking across 190+ countries and major maritime routes.
-- **Human-in-the-Loop:** Collaborative environment where humans govern autonomous agents.
-- **Continuous Learning:** Systems that adapt strategies based on historical disruption outcomes.
+## Why R3FLEX
 
-## 🛠 Tech Stack
+R3FLEX is built for teams that need fast, confident decisions across global logistics.
+It combines signal ingestion, AI-assisted operations, and a clean control plane to move from
+visibility to action in minutes, not hours.
 
-- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **UI Components:** [Radix UI](https://www.radix-ui.com/) & [Shadcn UI](https://ui.shadcn.com/)
-- **Animations:** [Framer Motion](https://www.framer.com/motion/) & Embla Carousel
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Validation:** [Zod](https://zod.dev/) & React Hook Form
+## Highlights
 
-## 📂 Project Structure
+- Autonomous workflows for disruption response across logistics operations.
+- Real-time monitoring and alerting for high-impact supply chain signals.
+- Human-in-the-loop controls for safe, auditable execution.
+- Modern UX built for operations teams under pressure.
+
+## Tech Stack
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS 4
+- Radix UI + shadcn/ui
+- Framer Motion
+- React Hook Form + Zod
+
+## Project Structure
 
 ```text
-Supply_Chain_Logistics/
-├── app/                  # Next.js App Router (pages & layouts)
-│   ├── login/            # Authentication: Login
-│   ├── signup/           # Authentication: Signup
-│   ├── pricing/          # Subscription & Plans
-│   ├── globals.css       # Global styles
-│   ├── layout.tsx        # Root layout with ThemeProvider
-│   └── page.tsx          # Landing page (GlobalTracker Hero)
-├── components/           # React Components
-│   ├── landing/          # Landing page specific components (ScrollGlobe, SiteHeader)
-│   ├── ui/               # Reusable Shadcn UI components
-│   └── theme-provider.tsx # Dark/Light mode provider
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions and shared constants
-│   ├── utils.ts          # Tailwind merge utility
-│   └── auth-field-classes.ts # Shared auth styling
-├── public/               # Static assets (images, icons)
-├── styles/               # Additional style configurations
-├── components.json       # Shadcn UI configuration
-├── package.json          # Dependencies and scripts
-└── tsconfig.json         # TypeScript configuration
+R3FLEX/
+|- app/                  # App Router pages and layouts
+|- components/           # Feature and UI components
+|- hooks/                # Custom React hooks
+|- lib/                  # Shared utilities
+|- public/               # Static assets
+|- styles/               # Additional styling
+|- package.json
+`- tsconfig.json
 ```
 
-## 🔄 User Flow
+## Quick Start
 
-The following diagram illustrates how a user interacts with the platform and how the Agentic AI handles supply chain signals.
+1. Install dependencies.
 
-```mermaid
-graph TD
-    A[User Arrives] --> B{Authenticated?}
-    B -- No --> C[Landing Page / Pricing]
-    C --> D[Sign Up / Login]
-    D --> E[Dashboard / War Room]
-    B -- Yes --> E
-    
-    E --> F[Monitor Global Signals]
-    F --> G{Disruption Detected?}
-    G -- No --> F
-    G -- Yes --> H[AI Agent Analysis]
-    
-    H --> I{Autonomous Action?}
-    I -- Yes --> J[Agent Executes Fix]
-    J --> K[Log Results & Notify User]
-    I -- No --> L[Escalate to Human]
-    L --> M[Human Decision]
-    M --> J
-    
-    K --> F
-```
-
-## 🚦 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- pnpm (recommended) or npm
-
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/Subhadip-Paul2006/Supply_Chain_Logistics.git
-cd Supply_Chain_Logistics
-```
-
-2. Install dependencies:
- ```bash
 pnpm install
 ```
 
-3. Run the development server:
+2. Start the development server.
+
 ```bash
 pnpm dev
 ```
 
-4. Open [(https://supply-chain-logistics.vercel.app)]
-## 📄 License
+3. Open http://localhost:3000
 
-This project is licensed under the MIT License.
+## Scripts
+
+```bash
+pnpm dev      # Run development server
+pnpm build    # Create production build
+pnpm start    # Start production server
+pnpm lint     # Run lint checks
+```
+
+## License
+
+MIT
