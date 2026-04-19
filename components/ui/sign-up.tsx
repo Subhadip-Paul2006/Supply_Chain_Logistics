@@ -114,7 +114,7 @@ export function AnimatedSignUp() {
                     isDark ? 'text-foreground' : 'text-gray-900',
                   )}
                 >
-                  Create your <span className="text-primary">GlobalTracker</span> account
+                  Create your <span className="text-primary">NexusGuard</span> account
                 </h1>
                 <p
                   className={cn(

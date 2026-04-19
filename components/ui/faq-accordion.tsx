@@ -85,7 +85,7 @@ export type FaqItem = { question: string; answer: string }
 
 const defaultFaqs: FaqItem[] = [
   {
-    question: 'How does GlobalTracker ingest supply-chain signals?',
+    question: 'How does NexusGuard ingest supply-chain signals?',
     answer:
       'We connect to carriers, ports, customs feeds, and your internal systems via secure APIs and streaming adapters. Events are normalized into a single timeline with full lineage so you can audit every signal.',
   },
@@ -95,7 +95,7 @@ const defaultFaqs: FaqItem[] = [
       'Yes. Data is encrypted in transit and at rest, with SOC 2 Type II controls and regional deployment options. You control retention and can export or delete on request.',
   },
   {
-    question: 'Can GlobalTracker integrate with our TMS or ERP?',
+    question: 'Can NexusGuard integrate with our TMS or ERP?',
     answer:
       'We ship connectors for major TMS, ERP, and visibility platforms, plus a webhook and GraphQL API for custom stacks. Our solutions team helps scope integrations during onboarding.',
   },

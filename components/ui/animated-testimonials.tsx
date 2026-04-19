@@ -34,7 +34,7 @@ export interface AnimatedTestimonialsProps {
 export function AnimatedTestimonials({
   title = 'Loved by operations teams',
   subtitle =
-    "Do not take our word for it — see what logistics and compliance leaders say about live visibility with GlobalTracker.",
+    "Do not take our word for it — see what logistics and compliance leaders say about live visibility with NexusGuard.",
   badgeText = 'Trusted in production',
   testimonials = [],
   autoRotateInterval = 6000,
@@ -244,7 +244,7 @@ export const defaultSupplyChainTestimonials: Testimonial[] = [
     role: 'VP Operations',
     company: 'TransOcean Logistics',
     content:
-      'GlobalTracker cut our exception response time by half. The single timeline across carriers and customs finally matches how our team actually works.',
+      'NexusGuard cut our exception response time by half. The single timeline across carriers and customs finally matches how our team actually works.',
     rating: 5,
     avatar:
       'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop',

@@ -51,7 +51,7 @@ export function SiteFooter() {
                 <Radar className="w-4 h-4" />
               </span>
               <span className="tracking-tight text-lg">
-                Global<span className="text-primary">Tracker</span>
+                Nexus<span className="text-primary">Guard</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
@@ -118,7 +118,7 @@ export function SiteFooter() {
 
         <div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground font-mono">
-            © {new Date().getFullYear()} GlobalTracker, Inc. All signals reserved.
+            © {new Date().getFullYear()} NexusGuard, Inc. All signals reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-muted-foreground">
             <Link href="#" className="hover:text-foreground transition-colors">

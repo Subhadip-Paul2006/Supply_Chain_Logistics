@@ -100,7 +100,7 @@ export function AnimatedSignIn() {
                   )}
                 >
                   Sign in to{' '}
-                  <span className="text-primary">GlobalTracker</span>
+                  <span className="text-primary">NexusGuard</span>
                 </h1>
                 <p
                   className={cn(

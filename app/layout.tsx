@@ -28,7 +28,7 @@ const fontGeistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'GlobalTracker — Every signal. Every border.',
+  title: 'NexusGuard — Every signal. Every border.',
   description:
     'A unified detection layer for your global operations. Watch shipments, signals, and supply chains across 190+ countries in real time.',
   generator: 'v0.app',

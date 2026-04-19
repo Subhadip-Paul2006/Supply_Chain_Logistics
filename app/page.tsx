@@ -10,7 +10,7 @@ const sections = [
     title: "Every signal.",
     subtitle: "Every border.",
     description:
-      "A unified detection layer for your global operations. GlobalTracker watches shipments, signals, and supply chains across 190+ countries — so your team can act on what matters, in the moment it happens.",
+      "A unified detection layer for your global operations. NexusGuard watches shipments, signals, and supply chains across 190+ countries — so your team can act on what matters, in the moment it happens.",
     align: "left" as const,
     actions: [
       { label: "Start free trial", variant: "primary" as const, href: "/signup" },

@@ -10,14 +10,14 @@ const faqs = [
   },
   {
     q: "What counts as an event?",
-    a: "An event is any discrete signal ingested by GlobalTracker — a customs update, RFID scan, route telemetry ping, or API-reported state change.",
+    a: "An event is any discrete signal ingested by NexusGuard — a customs update, RFID scan, route telemetry ping, or API-reported state change.",
   },
   {
     q: "Do you offer non-profit or academic pricing?",
     a: "Yes. We offer 70% off Team plans for qualifying non-profits and research institutions. Contact our sales team to apply.",
   },
   {
-    q: "Can I self-host GlobalTracker?",
+    q: "Can I self-host NexusGuard?",
     a: "Enterprise customers can deploy on-prem or in an air-gapped environment. Reach out and we will walk you through the deployment options.",
   },
 ]
@@ -90,7 +90,7 @@ export default function PricingPage() {
       </section>
 
       <section className="relative px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-gradient-to-br from-card via-card to-muted/40 p-10 text-center md:p-14">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-linear-to-br from-card via-card to-muted/40 p-10 text-center md:p-14">
           <h3 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
             Ready to see every signal?
           </h3>
