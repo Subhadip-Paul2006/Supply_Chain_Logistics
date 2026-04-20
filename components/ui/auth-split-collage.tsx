@@ -46,7 +46,7 @@ export function AuthSplitCollage({
         >
           <h2 className="mb-2 text-4xl font-bold md:text-5xl">190+</h2>
           <p className="text-center text-sm">
-            countries with live detection coverage on the NexusGuard network.
+            countries with live detection coverage on the R3FLEX network.
           </p>
         </div>
 

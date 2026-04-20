@@ -315,3 +315,33 @@
 .animate-scan {
   animation: scanLine 6s ease-in-out infinite;
 }
+
+/* Glow button micro-interactions */
+.glow-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 80%
+  );
+  transform: translateX(-140%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+
+.glow-btn:hover::before {
+  transform: translateX(140%);
+}
+
+.glow-btn[data-state="clicked"] {
+  transform: scale(0.98);
+  filter: brightness(0.96);
+}

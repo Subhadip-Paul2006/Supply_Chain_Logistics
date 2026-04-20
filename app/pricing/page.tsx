@@ -2,6 +2,7 @@ import Link from "next/link"
 import { SiteHeader } from "@/components/landing/site-header"
 import { SiteFooter } from "@/components/landing/site-footer"
 import { PricingClient } from "./pricing-client"
+import { GlowButton } from "@/components/ui/glow-button"
 
 const faqs = [
   {
@@ -10,14 +11,14 @@ const faqs = [
   },
   {
     q: "What counts as an event?",
-    a: "An event is any discrete signal ingested by NexusGuard — a customs update, RFID scan, route telemetry ping, or API-reported state change.",
+    a: "An event is any discrete signal ingested by R3FLEX — a customs update, RFID scan, route telemetry ping, or API-reported state change.",
   },
   {
     q: "Do you offer non-profit or academic pricing?",
     a: "Yes. We offer 70% off Team plans for qualifying non-profits and research institutions. Contact our sales team to apply.",
   },
   {
-    q: "Can I self-host NexusGuard?",
+    q: "Can I self-host R3FLEX?",
     a: "Enterprise customers can deploy on-prem or in an air-gapped environment. Reach out and we will walk you through the deployment options.",
   },
 ]
@@ -98,18 +99,12 @@ export default function PricingPage() {
             Spin up a workspace in minutes — no credit card required. Keep what you build.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/signup"
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-6 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              Start free trial
-            </Link>
-            <Link
-              href="#"
-              className="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-transparent px-6 font-medium text-foreground transition-colors hover:border-primary/40"
-            >
-              Book a demo
-            </Link>
+            <GlowButton asChild label="Start free trial" variant="primary" className="h-11">
+              <Link href="/signup">Start free trial</Link>
+            </GlowButton>
+            <GlowButton asChild label="Book a demo" variant="secondary" className="h-11">
+              <Link href="#">Book a demo</Link>
+            </GlowButton>
           </div>
         </div>
       </section>

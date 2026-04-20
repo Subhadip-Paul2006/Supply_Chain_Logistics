@@ -1,4 +1,4 @@
-# NexusGuard
+# R3FLEX
 
 One-liner: An agentic AI platform that detects global supply chain threats in real time, simulates rerouting scenarios via a live digital twin, and autonomously executes the optimal response before disruption reaches the warehouse.
 
@@ -6,11 +6,11 @@ This is not a dashboard. This is not a risk score. This is a system that acts.
 
 ## Live Demo
 
-https://supply-chain-logistics.vercel.app/
+https://r3flex.vercel.app/
 
 ## Executive Summary
 
-NexusGuard is positioned at the intersection of:
+R3FLEX is positioned at the intersection of:
 - a fast-growing supply chain risk market (`$2.47B` in 2024 to `$8.06B` by 2033, `13.8% CAGR`),
 - a rapidly expanding agentic AI market (`$7.06B` in 2025 to `$93.2B` by 2032, `44.6% CAGR`),
 - and a critical unmet need: autonomous execution for mid-market operators.
@@ -43,7 +43,7 @@ The core issue is not lack of AI, but lack of action:
 
 ### Capability matrix
 
-| Capability | Typical incumbent pattern | NexusGuard |
+| Capability | Typical incumbent pattern | R3FLEX |
 |---|---|---|
 | Real-time signal ingestion | Partial | ✅ |
 | Multi-tier supplier mapping | Partial | ✅ |
@@ -173,26 +173,26 @@ The core issue is not lack of AI, but lack of action:
 
 ### Installation
 ```bash
-git clone https://github.com/Subhadip-Paul2006/Supply_Chain_Logistics.git
-cd Supply_Chain_Logistics
+git clone https://github.com/Subhadip-Paul2006/R3FLEX.git
+cd R3FLEX
 pnpm install
 pnpm dev
 ```
 
-Open [https://supply-chain-logistics.vercel.app](https://supply-chain-logistics.vercel.app)
+Open [https://r3flex.vercel.app](https://r3flex.vercel.app)
 
 ## License
 
 MIT
 <<<<<<< HEAD
 =======
-# Agentic Supply Chain War Room
+# R3FLEX
 
 A unified detection layer and autonomous command center for global supply chain operations. This platform leverages Agentic AI to monitor, triage, and resolve high-priority logistics disruptions in real-time.
 
 ## 🚀 Overview
 
-The **Agentic Supply Chain War Room** is designed to transform traditional supply chain management from reactive reporting to autonomous execution. By ingesting billions of global events, the platform provides a "single pane of glass" for logistics, trade compliance, and threat intelligence.
+The **R3FLEX** platform is designed to transform traditional supply chain management from reactive reporting to autonomous execution. By ingesting billions of global events, the platform provides a "single pane of glass" for logistics, trade compliance, and threat intelligence.
 
 ### Key Pillars
 - **Autonomous Execution:** AI agents move beyond insights to execute actions across ERP, WMS, and TMS systems.
@@ -212,14 +212,14 @@ The **Agentic Supply Chain War Room** is designed to transform traditional suppl
 ## 📂 Project Structure
 
 ```text
-Supply_Chain_Logistics/
+R3FLEX/
 ├── app/                  # Next.js App Router (pages & layouts)
 │   ├── login/            # Authentication: Login
 │   ├── signup/           # Authentication: Signup
 │   ├── pricing/          # Subscription & Plans
 │   ├── globals.css       # Global styles
 │   ├── layout.tsx        # Root layout with ThemeProvider
-│   └── page.tsx          # Landing page (GlobalTracker Hero)
+│   └── page.tsx          # Landing page (R3FLEX Hero)
 ├── components/           # React Components
 │   ├── landing/          # Landing page specific components (ScrollGlobe, SiteHeader)
 │   ├── ui/               # Reusable Shadcn UI components
@@ -272,8 +272,8 @@ graph TD
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Subhadip-Paul2006/Supply_Chain_Logistics.git
-cd Supply_Chain_Logistics
+git clone https://github.com/Subhadip-Paul2006/R3FLEX.git
+cd R3FLEX
 ```
 
 2. Install dependencies:

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Eye, EyeOff, Moon, Sun } from 'lucide-react'
 
 import { AuthSplitCollage, type AuthTheme } from '@/components/ui/auth-split-collage'
+import { GlowButton } from '@/components/ui/glow-button'
 import { cn } from '@/lib/utils'
 
 export function AnimatedSignIn() {
@@ -98,7 +99,7 @@ export function AnimatedSignIn() {
                   )}
                 >
                   Sign in to{' '}
-                  <span className="text-primary">NexusGuard</span>
+                  <span className="text-primary">R3FLEX</span>
                 </h1>
                 <p
                   className={cn(
@@ -186,14 +187,13 @@ export function AnimatedSignIn() {
                   </Link>
                 </div>
 
-                <button
+                <GlowButton
                   type="submit"
                   disabled={isLoading}
-                  className={cn(
-                    'flex w-full justify-center rounded-md py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300',
-                    'bg-primary hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                    isLoading && 'cursor-not-allowed opacity-70',
-                  )}
+                  label="Log in"
+                  variant="primary"
+                  showSparkle={false}
+                  className={cn('h-11 w-full', isLoading && 'cursor-not-allowed opacity-70')}
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
@@ -201,9 +201,9 @@ export function AnimatedSignIn() {
                       Signing in…
                     </span>
                   ) : (
-                    'Log in'
+                    <span>Log in</span>
                   )}
-                </button>
+                </GlowButton>
 
                 <div className="relative flex items-center py-2">
                   <div
@@ -228,12 +228,11 @@ export function AnimatedSignIn() {
                   />
                 </div>
 
-                <button
+                <GlowButton
                   type="button"
-                  className={cn(
-                    'flex w-full items-center justify-center gap-2 rounded-md border py-3 text-sm font-medium transition-colors',
-                    'border-border bg-muted/50 text-foreground hover:bg-muted',
-                  )}
+                  variant="secondary"
+                  showSparkle={false}
+                  className="h-11 w-full gap-2 rounded-md"
                 >
                   <svg className="h-5 w-5 text-foreground/80" viewBox="0 0 24 24" aria-hidden>
                     <path
@@ -254,7 +253,7 @@ export function AnimatedSignIn() {
                     />
                   </svg>
                   Continue with Google
-                </button>
+                </GlowButton>
               </form>
             </div>
           </div>

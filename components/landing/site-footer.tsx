@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Radar, Github, Twitter, Linkedin } from "lucide-react"
+import { LiquidButton } from "@/components/ui/liquid-glass-button"
 
 const nav = [
   {
@@ -50,9 +51,7 @@ export function SiteFooter() {
               <span className="grid place-items-center w-9 h-9 rounded-full bg-primary text-primary-foreground">
                 <Radar className="w-4 h-4" />
               </span>
-              <span className="tracking-tight text-lg">
-                Nexus<span className="text-primary">Guard</span>
-              </span>
+              <span className="tracking-tight text-lg">R3FLEX</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
               Real-time visibility across every shipment, signal, and network node. Built for the
@@ -69,27 +68,36 @@ export function SiteFooter() {
             </div>
 
             <div className="flex items-center gap-3 pt-2">
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="grid place-items-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+              <LiquidButton
+                asChild
+                size="sm"
+                variant="subtle"
+                className="w-9 p-0 text-muted-foreground"
               >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="GitHub"
-                className="grid place-items-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                <a href="#" aria-label="Twitter">
+                  <Twitter className="w-4 h-4" />
+                </a>
+              </LiquidButton>
+              <LiquidButton
+                asChild
+                size="sm"
+                variant="subtle"
+                className="w-9 p-0 text-muted-foreground"
               >
-                <Github className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="grid place-items-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                <a href="#" aria-label="GitHub">
+                  <Github className="w-4 h-4" />
+                </a>
+              </LiquidButton>
+              <LiquidButton
+                asChild
+                size="sm"
+                variant="subtle"
+                className="w-9 p-0 text-muted-foreground"
               >
-                <Linkedin className="w-4 h-4" />
-              </a>
+                <a href="#" aria-label="LinkedIn">
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              </LiquidButton>
             </div>
           </div>
 
@@ -118,7 +126,7 @@ export function SiteFooter() {
 
         <div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground font-mono">
-            © {new Date().getFullYear()} NexusGuard, Inc. All signals reserved.
+            © {new Date().getFullYear()} R3FLEX, Inc. All signals reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-muted-foreground">
             <Link href="#" className="hover:text-foreground transition-colors">

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { Check, X } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { GlowButton } from '@/components/ui/glow-button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Card,
@@ -199,19 +199,14 @@ export function PricingComponent({
               </ul>
             </CardContent>
             <CardFooter className="p-6 pt-0">
-              <Button
+              <GlowButton
+                label={plan.buttonLabel}
                 type="button"
                 onClick={() => onPlanSelect(plan.id, billingCycle)}
-                className={cn(
-                  'w-full transition-all duration-200',
-                  isFeatured && 'shadow-lg shadow-primary/20',
-                )}
-                variant={isFeatured ? 'default' : 'outline'}
-                size="lg"
+                className={cn('w-full h-11', isFeatured && 'shadow-xl shadow-primary/30')}
+                variant={isFeatured ? 'primary' : 'secondary'}
                 aria-label={`Select ${plan.name} plan`}
-              >
-                {plan.buttonLabel}
-              </Button>
+              />
             </CardFooter>
           </Card>
         )

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ChevronDown, Eye, EyeOff, Moon, Sun } from 'lucide-react'
 
 import { AuthSplitCollage, type AuthTheme } from '@/components/ui/auth-split-collage'
+import { GlowButton } from '@/components/ui/glow-button'
 import { authInputClassName } from '@/lib/auth-field-classes'
 import { cn } from '@/lib/utils'
 
@@ -112,7 +113,7 @@ export function AnimatedSignUp() {
                     'text-foreground',
                   )}
                 >
-                  Create your <span className="text-primary">NexusGuard</span> account
+                  Create your <span className="text-primary">R3FLEX</span> account
                 </h1>
                 <p
                   className={cn(
@@ -341,14 +342,13 @@ export function AnimatedSignUp() {
                   </p>
                 ) : null}
 
-                <button
+                <GlowButton
                   type="submit"
                   disabled={isLoading}
-                  className={cn(
-                    'mt-2 flex w-full justify-center rounded-md py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all',
-                    'bg-primary hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                    isLoading && 'cursor-not-allowed opacity-70',
-                  )}
+                  label="Create account"
+                  variant="primary"
+                  showSparkle={false}
+                  className={cn('mt-2 h-11 w-full', isLoading && 'cursor-not-allowed opacity-70')}
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
@@ -356,9 +356,9 @@ export function AnimatedSignUp() {
                       Creating account…
                     </span>
                   ) : (
-                    'Create account'
+                    <span>Create account</span>
                   )}
-                </button>
+                </GlowButton>
 
                 <p
                   className={cn(

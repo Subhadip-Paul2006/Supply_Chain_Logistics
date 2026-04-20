@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState, useCallback, useMemo } from "react"
+import Link from "next/link"
 import Globe from "@/components/ui/globe"
 import { FaqAccordionSection } from "@/components/ui/faq-accordion"
 import {
@@ -9,6 +10,7 @@ import {
   defaultSupplyChainTestimonials,
 } from "@/components/ui/animated-testimonials"
 import { cn } from "@/lib/utils"
+import { GlowButton } from "@/components/ui/glow-button"
 
 interface ScrollGlobeProps {
   sections: {
@@ -138,7 +140,7 @@ export function ScrollGlobe({
       {/* Progress bar */}
       <div className="fixed top-0 left-0 w-full h-0.5 bg-border/30 z-50">
         <div
-          className="h-full bg-gradient-to-r from-primary via-primary to-secondary will-change-transform"
+          className="h-full bg-linear-to-r from-primary via-primary to-secondary will-change-transform"
           style={{
             transform: `scaleX(${scrollProgress})`,
             transformOrigin: "left center",
@@ -188,12 +190,12 @@ export function ScrollGlobe({
             </div>
           ))}
         </div>
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent -translate-x-1/2 -z-10" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-primary/20 to-transparent -translate-x-1/2 -z-10" />
       </div>
 
       {/* Globe layer */}
       <div
-        className="fixed z-10 pointer-events-none will-change-transform transition-all duration-[1400ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
+        className="fixed z-10 pointer-events-none will-change-transform transition-all duration-1400 ease-[cubic-bezier(0.23,1,0.32,1)]"
         style={{
           transform: globeTransform,
           filter: `opacity(${activeSection === sections.length - 1 ? 0.5 : 0.9})`,
@@ -330,7 +332,7 @@ export function ScrollGlobe({
                     className="group p-5 rounded-lg border border-border bg-card/60 backdrop-blur-md hover:bg-card transition-all duration-300 hover:border-primary/40 hover:-translate-y-0.5"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="mt-1.5 flex-shrink-0">
+                      <div className="mt-1.5 shrink-0">
                         <div className="w-2 h-2 rounded-full bg-primary group-hover:shadow-[0_0_12px_var(--primary)] transition-all" />
                       </div>
                       <div className="flex-1 space-y-1.5 min-w-0">
@@ -356,21 +358,29 @@ export function ScrollGlobe({
                 )}
               >
                 {section.actions.map((action) => {
-                  const classes = cn(
-                    "group inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-sm",
-                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background w-full sm:w-auto",
+                  const variant =
                     action.variant === "primary"
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-                      : "border border-border bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/40 text-foreground",
-                  )
+                      ? ("primary" as const)
+                      : ("secondary" as const)
+
                   return action.href ? (
-                    <a key={action.label} href={action.href} className={classes}>
-                      {action.label}
-                    </a>
+                    <GlowButton
+                      key={action.label}
+                      asChild
+                      label={action.label}
+                      variant={variant}
+                      className="w-full sm:w-auto"
+                    >
+                      <Link href={action.href}>{action.label}</Link>
+                    </GlowButton>
                   ) : (
-                    <button key={action.label} onClick={action.onClick} className={classes}>
-                      {action.label}
-                    </button>
+                    <GlowButton
+                      key={action.label}
+                      label={action.label}
+                      onClick={action.onClick}
+                      variant={variant}
+                      className="w-full sm:w-auto"
+                    />
                   )
                 })}
               </div>
