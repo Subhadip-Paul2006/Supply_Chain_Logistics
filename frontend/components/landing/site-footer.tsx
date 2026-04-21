@@ -33,7 +33,7 @@ const nav = [
   {
     title: "Resources",
     links: [
-      { label: "Documentation", href: "#" },
+      { label: "Documentation", href: "/docs" },
       { label: "Changelog", href: "#" },
       { label: "Status", href: "#" },
       { label: "Contact", href: "#" },
