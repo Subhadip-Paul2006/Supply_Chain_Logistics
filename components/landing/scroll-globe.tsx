@@ -9,6 +9,7 @@ import {
   AnimatedTestimonials,
   defaultSupplyChainTestimonials,
 } from "@/components/ui/animated-testimonials"
+import { SplitTypewriter } from "@/components/ui/split-typewriter"
 import { cn } from "@/lib/utils"
 import { GlowButton } from "@/components/ui/glow-button"
 
@@ -254,12 +255,17 @@ export function ScrollGlobe({
                   )}
                 >
                   {section.subtitle ? (
-                    <>
-                      <span className="block text-foreground">{section.title}</span>
-                      <span className="block text-primary">{section.subtitle}</span>
-                    </>
+                    <SplitTypewriter
+                      line1={section.title}
+                      line2={section.subtitle}
+                      line1ClassName="block text-foreground"
+                      line2ClassName="block text-primary"
+                    />
                   ) : (
-                    <span className="text-foreground">{section.title}</span>
+                    <SplitTypewriter
+                      line1={section.title}
+                      line1ClassName="text-foreground"
+                    />
                   )}
                 </h1>
 

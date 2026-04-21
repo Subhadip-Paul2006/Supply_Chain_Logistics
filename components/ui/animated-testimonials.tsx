@@ -7,6 +7,7 @@ import { motion, useAnimation, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
+import { SplitTypewriter } from '@/components/ui/split-typewriter'
 
 export interface Testimonial {
   id: number
@@ -119,7 +120,7 @@ export function AnimatedTestimonials({
               ) : null}
 
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                {title}
+                <SplitTypewriter line1={title} line1ClassName="text-foreground" />
               </h2>
 
               <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">

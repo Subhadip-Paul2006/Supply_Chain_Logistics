@@ -298,10 +298,28 @@
   animation: dataSheen 4.8s ease-in-out infinite;
 }
 
+@keyframes typed-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.typed-cursor {
+  color: var(--primary);
+  font-weight: 300;
+  opacity: 1;
+  margin-left: 0.05em;
+  animation: typed-blink 0.9s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-ticker,
   .animate-ticker-glow,
-  .animate-data-sheen {
+  .animate-data-sheen,
+  .typed-cursor {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
   }

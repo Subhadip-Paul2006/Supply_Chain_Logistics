@@ -1,0 +1,128 @@
+.customers-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.025) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 22px 80px rgba(0, 0, 0, 0.34);
+}
+
+.customers-glass-hover {
+  transition:
+    transform 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    background-color 240ms ease;
+}
+
+.customers-glass-hover:hover {
+  border-color: rgba(228, 87, 46, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 28px 90px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(228, 87, 46, 0.08);
+}
+
+@keyframes customers-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes customers-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes customers-orbit-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes customers-node-pulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes customers-grid-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.customers-marquee-track {
+  animation: customers-marquee 34s linear infinite;
+}
+
+.customers-orbit {
+  animation: customers-orbit 70s linear infinite;
+}
+
+.customers-orbit-reverse {
+  animation: customers-orbit-reverse 95s linear infinite;
+}
+
+.customers-node-pulse {
+  transform-origin: center;
+  animation: customers-node-pulse 2.8s ease-out infinite;
+}
+
+.customers-grid {
+  position: relative;
+}
+
+.customers-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at center, black 32%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, black 32%, transparent 80%);
+  animation: customers-grid-pulse 7s ease-in-out infinite;
+}
+
+.customers-logo-chip {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 30px rgba(0, 0, 0, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customers-marquee-track,
+  .customers-orbit,
+  .customers-orbit-reverse,
+  .customers-node-pulse,
+  .customers-grid::before {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

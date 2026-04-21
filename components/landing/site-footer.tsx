@@ -24,10 +24,10 @@ const nav = [
   {
     title: "Company",
     links: [
-      { label: "About", href: "#" },
+      { label: "About", href: "/about" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Customers", href: "#" },
-      { label: "Careers", href: "#" },
+      { label: "Customers", href: "/customers" },
+      { label: "Careers", href: "/career" },
     ],
   },
   {

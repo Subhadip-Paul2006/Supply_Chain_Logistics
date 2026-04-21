@@ -5,6 +5,7 @@ import { HelpCircle, MessageCircle, ChevronDown } from 'lucide-react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 
 import { cn } from '@/lib/utils'
+import { SplitTypewriter } from '@/components/ui/split-typewriter'
 
 const CustomAccordion = AccordionPrimitive.Root
 
@@ -132,7 +133,7 @@ export function FaqAccordionSection({
           headingClassName,
         )}
       >
-        {title}
+        <SplitTypewriter line1={title} line1ClassName="text-foreground" />
       </h2>
       <CustomAccordion
         type="single"
