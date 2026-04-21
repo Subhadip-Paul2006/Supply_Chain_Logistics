@@ -1,0 +1,365 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Logistics dark system */
+  --background: #111111;
+  --foreground: #f8f9fb;
+
+  --card: #1a232e;
+  --card-foreground: #f8f9fb;
+
+  --popover: #0f0f14;
+  --popover-foreground: #f8f9fb;
+
+  --primary: #e4572e;
+  --primary-foreground: #111111;
+
+  --secondary: #2a2a35;
+  --secondary-foreground: #f8f9fb;
+
+  --accent: #2a2a35;
+  --accent-foreground: #f8f9fb;
+
+  --muted: #1f2933;
+  --muted-foreground: #dadada;
+
+  --destructive: #c1121f;
+  --destructive-foreground: #f8f9fb;
+
+  --border: #3d4751;
+  --input: #3d4751;
+  --ring: #e4572e;
+
+  --chart-1: #e4572e;
+  --chart-2: #2a2a35;
+  --chart-3: #dadada;
+  --chart-4: #1a232e;
+  --chart-5: #c1121f;
+
+  --radius: 0.375rem;
+
+  --sidebar: #0f0f14;
+  --sidebar-foreground: #f8f9fb;
+  --sidebar-primary: #e4572e;
+  --sidebar-primary-foreground: #111111;
+  --sidebar-accent: #1a232e;
+  --sidebar-accent-foreground: #f8f9fb;
+  --sidebar-border: #3d4751;
+  --sidebar-ring: #e4572e;
+
+  /* Auth cards (login-1) aliases mapped to logistics palette */
+  --color-bg: #111111;
+  --color-surface: #1a232e;
+  --color-muted-surface: #1f2933;
+  --color-border: #3d4751;
+  --color-text-secondary: #dadada;
+  --color-text-primary: #e4572e;
+  --color-heading: #f8f9fb;
+  --spacing-6: 1.5rem;
+  --rounded-lg: 0.375rem;
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.35);
+  --color-text-primary-rgb: 228, 87, 46;
+  --color-bg-2: #2a2a35;
+  --color-icon-on-social: #111111;
+}
+
+.dark {
+  --background: #111111;
+  --foreground: #f8f9fb;
+  --card: #1a232e;
+  --card-foreground: #f8f9fb;
+  --popover: #0f0f14;
+  --popover-foreground: #f8f9fb;
+  --primary: #e4572e;
+  --primary-foreground: #111111;
+  --secondary: #2a2a35;
+  --secondary-foreground: #f8f9fb;
+  --accent: #2a2a35;
+  --accent-foreground: #f8f9fb;
+  --muted: #1f2933;
+  --muted-foreground: #dadada;
+  --destructive: #c1121f;
+  --destructive-foreground: #f8f9fb;
+  --border: #3d4751;
+  --input: #3d4751;
+  --ring: #e4572e;
+  --sidebar: #0f0f14;
+  --sidebar-foreground: #f8f9fb;
+  --sidebar-primary: #e4572e;
+  --sidebar-primary-foreground: #111111;
+  --sidebar-accent: #1a232e;
+  --sidebar-accent-foreground: #f8f9fb;
+  --sidebar-border: #3d4751;
+  --sidebar-ring: #e4572e;
+
+  --color-bg: #111111;
+  --color-surface: #1a232e;
+  --color-muted-surface: #1f2933;
+  --color-border: #3d4751;
+  --color-text-secondary: #dadada;
+  --color-text-primary: #e4572e;
+  --color-heading: #f8f9fb;
+  --spacing-6: 1.5rem;
+  --rounded-lg: 0.375rem;
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.35);
+  --color-text-primary-rgb: 228, 87, 46;
+  --color-bg-2: #2a2a35;
+  --color-icon-on-social: #111111;
+}
+
+@theme inline {
+  /* Executive Boardroom: Inter (body) + Plus Jakarta (display) · Next-Gen: Geist UI + Geist Mono data */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), 'Plus Jakarta Sans', ui-sans-serif, sans-serif;
+  --font-geist: var(--font-geist-sans), 'Geist', ui-sans-serif, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+  html {
+    @apply bg-background;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+  [data-slot='card-title'] {
+    @apply font-heading;
+  }
+}
+
+/* Nav label auto-fade keyframes used by ScrollGlobe */
+@keyframes fadeOutLabel {
+  0% {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) translateX(0.5rem) scale(0.95);
+  }
+}
+
+.animate-fadeOut {
+  animation: fadeOutLabel 2.6s ease-in-out forwards;
+}
+
+/* Globe activity tracker animations */
+@keyframes earthRotate {
+  0% { background-position: 0 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes twinkling {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 1; }
+}
+
+@keyframes arcDraw {
+  0% {
+    stroke-dashoffset: 300;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -300;
+    opacity: 0;
+  }
+}
+
+@keyframes pulseNode {
+  0%, 100% {
+    r: 2;
+    opacity: 1;
+  }
+  50% {
+    r: 4;
+    opacity: 0.6;
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: tickerScroll 30s linear infinite;
+}
+
+@keyframes tickerFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes tickerGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes dataSheen {
+  0% {
+    opacity: 0.25;
+    transform: translateX(-16%);
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.25;
+    transform: translateX(16%);
+  }
+}
+
+.animate-ticker-glow {
+  animation: tickerGlow 6.5s ease-in-out infinite;
+}
+
+.animate-data-sheen {
+  animation: dataSheen 4.8s ease-in-out infinite;
+}
+
+@keyframes typed-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.typed-cursor {
+  color: var(--primary);
+  font-weight: 300;
+  opacity: 1;
+  margin-left: 0.05em;
+  animation: typed-blink 0.9s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker,
+  .animate-ticker-glow,
+  .animate-data-sheen,
+  .typed-cursor {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
+/* Subtle scanning line across hero */
+@keyframes scanLine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-scan {
+  animation: scanLine 6s ease-in-out infinite;
+}
+
+/* Glow button micro-interactions */
+.glow-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 80%
+  );
+  transform: translateX(-140%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+}
+
+.glow-btn:hover::before {
+  transform: translateX(140%);
+}
+
+.glow-btn[data-state="clicked"] {
+  transform: scale(0.98);
+  filter: brightness(0.96);
+}
