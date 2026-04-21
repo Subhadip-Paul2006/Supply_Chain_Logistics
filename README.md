@@ -6,7 +6,7 @@ This is not a dashboard. This is not a risk score. This is a system that acts.
 
 ## Live Demo
 
-https://r3flex.vercel.app/
+https://supply-chain-logistics.vercel.app/
 
 ## Executive Summary
 
