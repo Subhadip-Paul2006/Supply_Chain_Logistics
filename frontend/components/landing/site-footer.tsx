@@ -35,8 +35,8 @@ const nav = [
     links: [
       { label: "Documentation", href: "/docs" },
       { label: "Changelog", href: "#" },
-      { label: "Status", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Status", href: "/status" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ]
