@@ -363,3 +363,31 @@
   transform: scale(0.98);
   filter: brightness(0.96);
 }
+@keyframes activityFeedMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 0.75rem));
+  }
+}
+
+.activity-feed-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.activity-feed-marquee {
+  animation: activityFeedMarquee 32s linear infinite;
+  will-change: transform;
+}
+
+.activity-feed-marquee[data-paused="true"] {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-feed-marquee {
+    animation: none;
+    transform: none;
+  }
+}

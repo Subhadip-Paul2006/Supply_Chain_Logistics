@@ -639,3 +639,59 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     </div>
   )
 }
+
+function TypewriterHeading() {
+  const [key, setKey] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setKey(k => k + 1)
+    }, 6000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const text1 = "Every signal starts with a "
+  const text2 = "conversation."
+
+  return (
+    <h1
+      className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl mx-auto"
+      style={{ color: C.ivory, display: "grid", justifyItems: "center" }}
+    >
+      <span className="invisible select-none" style={{ gridArea: "1/1" }} aria-hidden>
+        {text1} <span style={{ color: C.gold }}>{text2}</span>|
+      </span>
+
+      <span key={key} style={{ gridArea: "1/1", display: "inline-block" }}>
+        {text1.split("").map((c, i) => (
+          <motion.span
+            key={`t1-${i}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: i * 0.04, duration: 0.01 }}
+          >
+            {c}
+          </motion.span>
+        ))}
+        {text2.split("").map((c, i) => (
+          <motion.span
+            key={`t2-${i}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: (text1.length + i) * 0.04, duration: 0.01 }}
+            style={{ color: C.gold }}
+          >
+            {c}
+          </motion.span>
+        ))}
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+          style={{ color: C.gold, display: "inline-block", marginLeft: "2px" }}
+        >
+          |
+        </motion.span>
+      </span>
+    </h1>
+  )
+}
