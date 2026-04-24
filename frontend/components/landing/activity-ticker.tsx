@@ -276,7 +276,7 @@ export function ActivityTicker() {
   const [isPaused, setIsPaused] = useState(false)
 
   return (
-    <section className="relative overflow-hidden border-y border-border/70 bg-transparent py-8 sm:py-10">
+    <section className="relative overflow-hidden border-b border-border/70 bg-transparent py-8 sm:py-10">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[140px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

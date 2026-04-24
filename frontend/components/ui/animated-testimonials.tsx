@@ -218,9 +218,11 @@ export function AnimatedTestimonials({
             animate={controls}
             className="mt-16 text-center md:mt-24"
           >
-            <h3 className="mb-8 text-sm font-medium text-muted-foreground">
-              {trustedCompaniesTitle}
-            </h3>
+            {trustedCompaniesTitle ? (
+              <h3 className="mb-8 text-sm font-medium text-muted-foreground">
+                {trustedCompaniesTitle}
+              </h3>
+            ) : null}
             <div className="flex flex-wrap justify-center gap-x-10 gap-y-6 md:gap-x-12">
               {trustedCompanies.map((company) => (
                 <div

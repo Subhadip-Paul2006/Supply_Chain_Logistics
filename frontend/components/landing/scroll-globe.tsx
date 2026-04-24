@@ -289,13 +289,8 @@ export function ScrollGlobe({
                 embedded
                 badgeText=""
                 testimonials={defaultSupplyChainTestimonials}
-                trustedCompanies={[
-                  "Maersk",
-                  "DHL",
-                  "FedEx",
-                  "DB Schenker",
-                  "CMA CGM",
-                ]}
+                trustedCompaniesTitle=""
+                trustedCompanies={[]}
                 className="mt-2"
               />
             ) : null}

@@ -385,7 +385,195 @@
   animation-play-state: paused;
 }
 
+.dual-marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.dual-marquee-track {
+  animation-duration: var(--ticker-duration);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: running;
+  will-change: transform;
+}
+
+.dual-marquee-track-left {
+  animation-name: dualMarqueeLeft;
+}
+
+.dual-marquee-track-right {
+  animation-name: dualMarqueeRight;
+}
+
+.dual-marquee-row::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 9999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.02));
+  pointer-events: none;
+}
+
+.dual-marquee-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-120%);
+  animation: dualMarqueeRowSheen 12s linear infinite;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.dual-marquee-pill {
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    background-color 240ms ease,
+    color 240ms ease;
+}
+
+.dual-marquee-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.14) 48%, transparent 78%);
+  transform: translateX(-135%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.dual-marquee-pill:hover {
+  transform: translate3d(0, -2px, 0);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.dual-marquee-pill:hover::before {
+  opacity: 1;
+  animation: dualMarqueePillSheen 1.15s ease forwards;
+}
+
+.dual-marquee-emblem::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0.55;
+  animation: dualMarqueePulse 3.6s ease-in-out infinite;
+  animation-delay: var(--logo-delay, 0s);
+}
+
+.dual-marquee-emblem-glow {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 0 0 rgba(228, 87, 46, 0);
+  transition: box-shadow 260ms ease, border-color 260ms ease;
+}
+
+.dual-marquee-icon {
+  animation: dualMarqueeIconFloat 4.8s ease-in-out infinite;
+  animation-delay: var(--logo-delay, 0s);
+}
+
+.dual-marquee-pill:hover .dual-marquee-emblem-glow {
+  border-color: rgba(228, 87, 46, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 24px rgba(228, 87, 46, 0.14);
+}
+
+.dual-marquee-row:hover .dual-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes dualMarqueeLeft {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes dualMarqueeRight {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes dualMarqueeRowSheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes dualMarqueePillSheen {
+  0% {
+    transform: translateX(-135%);
+  }
+  100% {
+    transform: translateX(135%);
+  }
+}
+
+@keyframes dualMarqueePulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes dualMarqueeIconFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -1.5px, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .dual-marquee-row::after,
+  .dual-marquee-pill::before,
+  .dual-marquee-emblem::before,
+  .dual-marquee-icon,
+  .dual-marquee-track,
   .activity-feed-marquee {
     animation: none;
     transform: none;

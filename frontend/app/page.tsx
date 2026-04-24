@@ -2,6 +2,7 @@ import { ScrollGlobe } from "@/components/landing/scroll-globe"
 import { SiteHeader } from "@/components/landing/site-header"
 import { SiteFooter } from "@/components/landing/site-footer"
 import { ActivityTicker } from "@/components/landing/activity-ticker"
+import { DualMarquee } from "@/components/landing/dual-marquee"
 
 const sections = [
   {
@@ -89,8 +90,8 @@ export default function HomePage() {
       <SiteHeader />
       <ScrollGlobe sections={sections} />
 
-      {/* Activity tracker line across the globe */}
       <div className="relative z-30">
+        <DualMarquee />
         <ActivityTicker />
       </div>
 
