@@ -223,24 +223,25 @@ function MarqueeRow({
         {duplicatedItems.map((item, index) => (
           <div
             key={`${item.key}-${index}`}
-            className="dual-marquee-pill group/item relative flex shrink-0 items-center gap-3 rounded-full border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.018)_58%,rgba(255,255,255,0.035))] px-4 py-2.5 text-foreground/68 transition-all duration-300 hover:border-primary/35 hover:text-foreground sm:px-5 sm:py-3"
+            className="dual-marquee-pill liquid-glass-btn [&::before]:!content-none group/item relative overflow-hidden flex shrink-0 items-center gap-3 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),inset_0_-1px_1px_rgba(0,0,0,0.5),0_8px_32px_rgba(0,0,0,0.4)] px-4 py-2.5 text-foreground/80 transition-all duration-300 hover:border-primary/40 hover:text-foreground sm:px-5 sm:py-3"
             style={
               {
                 ["--logo-delay" as string]: `${(index % items.length) * 0.32}s`,
               } as CSSProperties
             }
           >
-            <span className="dual-marquee-emblem relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.12),rgba(255,255,255,0.03)_58%,rgba(255,255,255,0.015))] text-foreground/72 transition-all duration-300 group-hover/item:border-primary/35 group-hover/item:text-foreground sm:h-11 sm:w-11">
-              <span className="dual-marquee-emblem-glow absolute inset-1 rounded-full border border-white/8" />
+            <div className="liquid-sheen" />
+            <span className="dual-marquee-emblem relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)] text-foreground/80 transition-all duration-300 group-hover/item:border-primary/50 group-hover/item:text-foreground sm:h-11 sm:w-11">
+              <span className="dual-marquee-emblem-glow absolute inset-1 rounded-full border border-white/10" />
               <span className="dual-marquee-icon relative z-10">
                 <BrandGlyph brand={item.key} />
               </span>
             </span>
-            <div className="flex min-w-0 flex-col">
-              <span className="whitespace-nowrap text-[0.82rem] font-semibold tracking-[0.14em] text-foreground/82 sm:text-[0.88rem]">
+            <div className="flex min-w-0 flex-col relative z-10">
+              <span className="whitespace-nowrap text-[0.82rem] font-semibold tracking-[0.14em] text-foreground/90 sm:text-[0.88rem]">
                 {item.name}
               </span>
-              <span className="whitespace-nowrap text-[0.58rem] uppercase tracking-[0.22em] text-foreground/38 sm:text-[0.62rem]">
+              <span className="whitespace-nowrap text-[0.58rem] uppercase tracking-[0.22em] text-foreground/50 sm:text-[0.62rem]">
                 {item.meta}
               </span>
             </div>
@@ -254,6 +255,28 @@ function MarqueeRow({
 export function DualMarquee() {
   return (
     <section className="relative overflow-hidden bg-transparent py-8 sm:py-10">
+      <style>{`
+        .liquid-glass-btn .liquid-sheen {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.4) 45%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.4) 55%, transparent 80%);
+          transform: translateX(-150%);
+          opacity: 0;
+          pointer-events: none;
+          z-index: 10;
+        }
+        .liquid-glass-btn:hover .liquid-sheen {
+          animation: liquidSheenTwice 1.4s ease-in-out forwards;
+        }
+        @keyframes liquidSheenTwice {
+          0% { transform: translateX(-150%) skewX(-15deg); opacity: 1; }
+          40% { transform: translateX(150%) skewX(-15deg); opacity: 1; }
+          50% { transform: translateX(-150%) skewX(-15deg); opacity: 0; }
+          51% { transform: translateX(-150%) skewX(-15deg); opacity: 1; }
+          90% { transform: translateX(150%) skewX(-15deg); opacity: 1; }
+          100% { transform: translateX(150%) skewX(-15deg); opacity: 0; }
+        }
+      `}</style>
       <div className="pointer-events-none absolute inset-x-0 top-1/2 h-24 -translate-y-1/2 bg-linear-to-r from-transparent via-primary/[0.045] to-transparent" />
       <div className="pointer-events-none absolute left-[12%] top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-primary/8 blur-[110px]" />
       <div className="pointer-events-none absolute right-[10%] top-1/2 h-36 w-36 -translate-y-1/2 rounded-full bg-primary/10 blur-[130px]" />

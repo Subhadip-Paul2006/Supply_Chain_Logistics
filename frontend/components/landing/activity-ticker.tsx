@@ -282,7 +282,7 @@ export function ActivityTicker() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 pb-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.28em] text-muted-foreground/70">
+            <div className="hidden">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
                 <span className="relative inline-flex size-2 rounded-full bg-primary" />

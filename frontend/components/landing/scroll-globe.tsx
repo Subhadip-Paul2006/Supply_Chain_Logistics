@@ -232,7 +232,7 @@ export function ScrollGlobe({
                   : "max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-3xl",
             )}
           >
-            {section.badge && (
+            {false && section.badge && (
               <div
                 className={cn(
                   "inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full border border-border bg-card/60 backdrop-blur-sm text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground",
