@@ -93,19 +93,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 h-full flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 h-full flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-           <h1 className="text-2xl font-semibold tracking-tight">Active Operations</h1>
+           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Active Operations</h1>
           <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
              {user?.email ? `Signed in as ${user.email}` : "Supabase session active"}
            </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <button 
             onClick={handleSignOut}
-            className="border border-white/10 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2 transition-all"
+            className="border border-white/10 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-md font-medium text-sm flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
           >
             <SignOut weight="bold" />
             Sign out
@@ -113,7 +113,7 @@ export default function DashboardPage() {
           <button 
             onClick={handleTriggerDemo} 
             disabled={loadingDemo}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 w-full sm:w-auto"
           >
             <Play weight="fill" /> 
             {loadingDemo ? "Simulating..." : "Trigger Scenario (Suez Blockade)"}
@@ -135,9 +135,9 @@ export default function DashboardPage() {
             <h2 className="text-sm font-medium tracking-wide uppercase text-gray-400">Network Topology</h2>
           </div>
           
-          <div className="flex-1 p-6 relative flex items-center justify-center bg-[url('/grid-pattern.svg')] bg-center backdrop-blur-3xl opacity-80">
+          <div className="flex-1 p-4 sm:p-6 relative flex items-center justify-center bg-[url('/grid-pattern.svg')] bg-center backdrop-blur-3xl opacity-80 map-container">
             {/* Extremely simple placeholder topology for the War Room */}
-            <div className="w-full flex items-center justify-between px-10">
+            <div className="w-full flex items-center justify-between px-4 sm:px-10">
               <div className="flex flex-col items-center gap-2">
                  <div className="w-12 h-12 bg-gray-800 border-2 border-green-500/50 rounded-full flex items-center justify-center text-xs font-bold shadow-[0_0_15px_rgba(34,197,94,0.3)]">IN</div>
                  <span className="text-[10px] text-gray-400 uppercase">Chennai Mfg</span>

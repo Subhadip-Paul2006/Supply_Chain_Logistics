@@ -215,15 +215,15 @@ function MarqueeRow({
   } as CSSProperties
 
   return (
-    <div className="dual-marquee-row relative overflow-hidden rounded-full border border-white/10 bg-transparent px-3 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.14)] backdrop-blur-[2px] sm:px-4">
+    <div className="dual-marquee-row relative overflow-hidden rounded-full border border-white/10 bg-transparent px-2 py-2 shadow-[0_18px_40px_rgba(0,0,0,0.14)] backdrop-blur-[2px] sm:px-3 sm:py-3 md:px-4">
       <div
-        className={`dual-marquee-track ${direction === "left" ? "dual-marquee-track-left" : "dual-marquee-track-right"} flex w-max min-w-full items-center gap-5 sm:gap-8 lg:gap-10`}
+        className={`dual-marquee-track ${direction === "left" ? "dual-marquee-track-left" : "dual-marquee-track-right"} flex w-max min-w-full items-center gap-3 sm:gap-5 md:gap-8 lg:gap-10`}
         style={animationStyle}
       >
         {duplicatedItems.map((item, index) => (
           <div
             key={`${item.key}-${index}`}
-            className="dual-marquee-pill liquid-glass-btn [&::before]:!content-none group/item relative overflow-hidden flex shrink-0 items-center gap-3 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),inset_0_-1px_1px_rgba(0,0,0,0.5),0_8px_32px_rgba(0,0,0,0.4)] px-4 py-2.5 text-foreground/80 transition-all duration-300 hover:border-primary/40 hover:text-foreground sm:px-5 sm:py-3"
+            className="dual-marquee-pill liquid-glass-btn [&::before]:!content-none group/item relative overflow-hidden flex shrink-0 items-center gap-2 sm:gap-3 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),inset_0_-1px_1px_rgba(0,0,0,0.5),0_8px_32px_rgba(0,0,0,0.4)] px-3 py-2 text-foreground/80 transition-all duration-300 hover:border-primary/40 hover:text-foreground sm:px-4 sm:py-2.5 md:px-5 md:py-3"
             style={
               {
                 ["--logo-delay" as string]: `${(index % items.length) * 0.32}s`,
@@ -231,7 +231,7 @@ function MarqueeRow({
             }
           >
             <div className="liquid-sheen" />
-            <span className="dual-marquee-emblem relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)] text-foreground/80 transition-all duration-300 group-hover/item:border-primary/50 group-hover/item:text-foreground sm:h-11 sm:w-11">
+            <span className="dual-marquee-emblem relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)] text-foreground/80 transition-all duration-300 group-hover/item:border-primary/50 group-hover/item:text-foreground sm:h-10 sm:w-10 md:h-11 md:w-11">
               <span className="dual-marquee-emblem-glow absolute inset-1 rounded-full border border-white/10" />
               <span className="dual-marquee-icon relative z-10">
                 <BrandGlyph brand={item.key} />
@@ -283,7 +283,7 @@ export function DualMarquee() {
 
       <div className="dual-marquee-mask relative mx-auto flex w-full max-w-[1600px] flex-col gap-4 px-4 sm:px-6 lg:px-8">
         <div className="pb-2 text-center">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+          <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
             <SplitTypewriter
               line1="Our Sources & Partners"
               line1ClassName="text-foreground"
@@ -293,7 +293,7 @@ export function DualMarquee() {
         <MarqueeRow items={newsNetworks} direction="left" duration={34} />
         <MarqueeRow items={logisticsNetworks} direction="right" duration={38} />
         <div className="pt-2 text-center">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+          <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
             <SplitTypewriter
               line1="Our Clients"
               line1ClassName="text-foreground"

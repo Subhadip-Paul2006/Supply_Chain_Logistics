@@ -44,8 +44,8 @@ const nav = [
 export function SiteFooter() {
   return (
     <footer className="relative z-30 border-t border-border bg-popover/80 font-geist backdrop-blur-xl">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        <div className="grid gap-8 md:gap-12 lg:grid-cols-[1.3fr_2fr]">
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <span className="grid place-items-center w-9 h-9 rounded-full bg-primary text-primary-foreground">
@@ -101,7 +101,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
             {nav.map((col) => (
               <div key={col.title}>
                 <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">

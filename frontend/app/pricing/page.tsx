@@ -46,7 +46,7 @@ export default function PricingPage() {
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
             Pricing
           </div>
-          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
             Plans that scale with your <span className="text-primary">network</span>.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -91,8 +91,8 @@ export default function PricingPage() {
       </section>
 
       <section className="relative px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-linear-to-br from-card via-card to-muted/40 p-10 text-center md:p-14">
-          <h3 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-linear-to-br from-card via-card to-muted/40 p-6 text-center sm:p-8 md:p-10 lg:p-14">
+          <h3 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
             Ready to see every signal?
           </h3>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
