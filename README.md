@@ -152,8 +152,8 @@ flowchart TD
 
   %% ========== EXECUTION / HUMAN IN LOOP ==========
   CE --> EX[Executor<br/>auto_execute OR escalate_to_human<br/>app/engine/executor.py]
-  EX -->|if confidence >= threshold| AUTO[Auto-execute path<br/>mock ERP update + supplier email draft]
-  EX -->|if confidence < threshold| HUMAN[Escalate path<br/>publish approval_required event]
+  EX -->|"if confidence >= threshold"| AUTO[Auto-execute path<br/>mock ERP update + supplier email draft]
+  EX -->|"if confidence < threshold"| HUMAN[Escalate path<br/>publish approval_required event]
 
   %% ========== REALTIME + APPROVAL LOOP ==========
   HUMAN -->|Redis pub/sub publish| RDS[(Redis :6379<br/>channel disruptions:{company_id})]
