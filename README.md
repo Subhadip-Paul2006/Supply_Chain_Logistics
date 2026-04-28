@@ -121,6 +121,11 @@ From [frontend/package.json](frontend/package.json):
 - Global theme tokens and base styles are in [frontend/app/globals.css](frontend/app/globals.css).
 - Root layout and metadata are in [frontend/app/layout.tsx](frontend/app/layout.tsx).
 
+## AI Model Architecture Pipeline (R3FLEX)
+
+> Backend AI is implemented with **LangGraph + LangChain + Google Gemini** and a confidence-threshold human-in-the-loop execution path.
+
+```mermaid
 flowchart TD
   %% ========== CLIENT/UI ==========
   U[User / Ops Team] -->|Web UI| FE[Next.js Frontend :3000<br/>frontend/app]
@@ -141,9 +146,9 @@ flowchart TD
   A3 --> A4[4) CascadeAgent<br/>simulate second-order impacts<br/>app/agents/cascade.py]
 
   %% ========== SCENARIOS + SCORING ==========
-  A4 --> SG[ScenarioGenerator<br/>3 options תמיד (exactly 3)<br/>hardcoded Suez demo else Gemini<br/>app/engine/scenario_gen.py]
-  SG --> TS[TradeoffScorer<br/>ranks options by risk/cost/time<br/>app/engine/tradeoff.py]
-  TS --> CE[ConfidenceEvaluator<br/>decide auto vs approval threshold<br/>app/engine/confidence.py]
+  A4 --> SG[ScenarioGenerator<br/>EXACTLY 3 options<br/>hardcoded Suez demo else Gemini<br/>app/engine/scenario_gen.py]
+  SG --> TS[TradeoffScorer<br/>rank options by risk/cost/time<br/>app/engine/tradeoff.py]
+  TS --> CE[ConfidenceEvaluator<br/>auto vs approval threshold<br/>app/engine/confidence.py]
 
   %% ========== EXECUTION / HUMAN IN LOOP ==========
   CE --> EX[Executor<br/>auto_execute OR escalate_to_human<br/>app/engine/executor.py]
@@ -154,12 +159,26 @@ flowchart TD
   HUMAN -->|Redis pub/sub publish| RDS[(Redis :6379<br/>channel disruptions:{company_id})]
   RDS -->|pubsub listen| WS
   WS -->|push event| FE
-  FE -->|Human clicks Approve/Reject| FE2[Frontend decision action<br/>frontend/lib/api.ts]
+  FE -->|Human Approve/Reject| FE2[Frontend decision action<br/>frontend/lib/api.ts]
 
   %% ========== STORAGE / AUDIT ==========
   SVC --> PG[(Postgres :5432<br/>Disruptions/Scenarios/Decisions/Audit)]
-  EX --> AUD[AuditService.log()<br/>app/services/audit_svc.py<br/>**MUST happen before execution**]
+  EX --> AUD[AuditService.log()<br/>app/services/audit_svc.py<br/>MUST happen before execution]
   AUD --> PG
 
   %% ========== OPTIONAL SUPABASE (frontend demo wiring) ==========
   FE2 --> SB[(Supabase Tables<br/>disruptions/scenarios/decisions/audit_logs<br/>supabase/schema.sql)]
+```
+
+### Pipeline stages (what the “AI model” does)
+1. **Signal ingestion** (scheduler polling + manual/demo triggers)
+2. **ClassifierAgent (Gemini)** → event type + geography (fallback: keywords)
+3. **SeverityAgent (Gemini)** → severity + cost/delay estimates (fallback: heuristic)
+4. **GraphMapperAgent** → map disruption to supplier graph nodes + shipment IDs
+5. **CascadeAgent** → simulate second-order impacts (cascade nodes, bottlenecks, stock-out risk)
+6. **ScenarioGenerator** → generates **exactly 3** response options (demo: hardcoded Suez; otherwise Gemini)
+7. **Tradeoff + Confidence** → ranks options + decides if confidence is above threshold
+8. **Executor**
+   - **Auto-exec** if confidence ≥ threshold
+   - **Escalate to human** if confidence < threshold via **Redis → WebSocket → UI modal**
+9. **Audit trail** persisted (reasoning, signals used, confidence, actor)
