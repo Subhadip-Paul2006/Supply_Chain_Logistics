@@ -124,46 +124,68 @@ From [frontend/package.json](frontend/package.json):
 ## AI Model Architecture Pipeline (R3FLEX)
 
 > Backend AI is implemented with **LangGraph + LangChain + Google Gemini** and a confidence-threshold human-in-the-loop execution path.
-```
-flowchart TD
-
-%% ================= INPUT LAYER =================
-A[External Signals / Events] --> B[Signal Ingestion Layer]
-B -->|Scheduler / API Trigger| C[Disruption Service]
-
-%% ================= ORCHESTRATION =================
-C --> D[LangGraph Orchestrator<br/>StateGraph Pipeline]
-
-%% ================= AI AGENT PIPELINE =================
-D --> E1[Classifier Agent<br/>LLM: Gemini]
-E1 --> E2[Severity Agent<br/>LLM + Heuristics]
-E2 --> E3[Graph Mapper Agent<br/>Supply Chain Mapping]
-E3 --> E4[Cascade Agent<br/>Impact Simulation]
-
-%% ================= DECISION ENGINE =================
-E4 --> F1[Scenario Generator<br/>Generate 3 Options]
-F1 --> F2[Tradeoff Scorer<br/>Cost vs Time vs Risk]
-F2 --> F3[Confidence Evaluator]
-
-%% ================= EXECUTION =================
-F3 -->|High Confidence| G1[Auto Executor]
-F3 -->|Low Confidence| G2[Human-in-the-loop Approval]
-
-%% ================= HUMAN LOOP =================
-G2 --> H1[Redis Pub/Sub]
-H1 --> H2[WebSocket Server]
-H2 --> H3[Frontend UI Decision Panel]
-
-%% ================= STORAGE =================
-C --> DB[(PostgreSQL Database)]
-G1 --> DB
-G2 --> DB
-
-%% ================= AUDIT =================
-G1 --> AUD[Audit Logger]
-G2 --> AUD
-AUD --> DB
-```
+External Signals / Events
+        |
+        v
+Signal Ingestion Layer (Scheduler / API)
+        |
+        v
+Disruption Service (FastAPI)
+        |
+        v
+LangGraph Orchestrator (StateGraph)
+        |
+        v
++---------------- AI AGENT PIPELINE ----------------+
+|                                                   |
+|  Classifier Agent (Gemini)                        |
+|        |                                          |
+|        v                                          |
+|  Severity Agent (LLM + Heuristic)                 |
+|        |                                          |
+|        v                                          |
+|  Graph Mapper Agent (Supply Chain Mapping)        |
+|        |                                          |
+|        v                                          |
+|  Cascade Agent (Impact Simulation)                |
+|                                                   |
++---------------------------------------------------+
+        |
+        v
++--------------- DECISION ENGINE --------------------+
+|                                                   |
+|  Scenario Generator (Generate 3 Options)           |
+|        |                                          |
+|        v                                          |
+|  Tradeoff Scorer (Cost / Time / Risk)             |
+|        |                                          |
+|        v                                          |
+|  Confidence Evaluator                             |
+|                                                   |
++---------------------------------------------------+
+        |
+        v
++---------------- EXECUTION -------------------------+
+|                                                   |
+|  if confidence >= threshold                       |
+|        --> Auto Executor                          |
+|                                                   |
+|  if confidence < threshold                        |
+|        --> Human-in-the-loop                      |
+|                                                   |
++---------------------------------------------------+
+        |
+        v
+        +----------------------+
+        |                      |
+        v                      v
+PostgreSQL DB          Redis Pub/Sub
+        |                      |
+        v                      v
+  Audit Logger        WebSocket Server
+        |                      |
+        v                      v
+     Storage            Frontend UI
 
 ### Pipeline stages (what the “AI model” does)
 1. **Signal ingestion** (scheduler polling + manual/demo triggers)
