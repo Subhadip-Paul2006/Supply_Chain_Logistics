@@ -121,6 +121,45 @@ From [frontend/package.json](frontend/package.json):
 - Global theme tokens and base styles are in [frontend/app/globals.css](frontend/app/globals.css).
 - Root layout and metadata are in [frontend/app/layout.tsx](frontend/app/layout.tsx).
 
-## License
+flowchart TD
+  %% ========== CLIENT/UI ==========
+  U[User / Ops Team] -->|Web UI| FE[Next.js Frontend :3000<br/>frontend/app]
+  FE <-->|WebSocket| WS[FastAPI WS<br/>/ws/disruptions/{company_id}<br/>r3flex-backend/app/routers/ws.py]
 
-MIT
+  %% ========== TRIGGERS ==========
+  FE -->|POST| API1[POST /disruptions/demo<br/>or /disruptions/trigger<br/>r3flex-backend/app/routers/disruptions.py]
+  SCH[APScheduler Poller<br/>r3flex-backend/app/ingestion/scheduler.py] -->|periodic signals| API1
+
+  %% ========== CORE ORCHESTRATION ==========
+  API1 --> SVC[DisruptionService.process_signal()<br/>r3flex-backend/app/services/disruption_svc.py]
+  SVC --> PIPE[LangGraph Pipeline (StateGraph)<br/>run_pipeline()<br/>r3flex-backend/app/agents/orchestrator.py]
+
+  %% ========== LLM / AGENT STAGES ==========
+  PIPE --> A1[1) ClassifierAgent<br/>Gemini structured output + fallback<br/>app/agents/classifier.py]
+  A1 --> A2[2) SeverityAgent<br/>Gemini structured output + heuristic fallback<br/>app/agents/severity.py]
+  A2 --> A3[3) GraphMapperAgent<br/>map disruption -> supply nodes/shipments<br/>app/agents/graph_mapper.py]
+  A3 --> A4[4) CascadeAgent<br/>simulate second-order impacts<br/>app/agents/cascade.py]
+
+  %% ========== SCENARIOS + SCORING ==========
+  A4 --> SG[ScenarioGenerator<br/>3 options תמיד (exactly 3)<br/>hardcoded Suez demo else Gemini<br/>app/engine/scenario_gen.py]
+  SG --> TS[TradeoffScorer<br/>ranks options by risk/cost/time<br/>app/engine/tradeoff.py]
+  TS --> CE[ConfidenceEvaluator<br/>decide auto vs approval threshold<br/>app/engine/confidence.py]
+
+  %% ========== EXECUTION / HUMAN IN LOOP ==========
+  CE --> EX[Executor<br/>auto_execute OR escalate_to_human<br/>app/engine/executor.py]
+  EX -->|if confidence >= threshold| AUTO[Auto-execute path<br/>mock ERP update + supplier email draft]
+  EX -->|if confidence < threshold| HUMAN[Escalate path<br/>publish approval_required event]
+
+  %% ========== REALTIME + APPROVAL LOOP ==========
+  HUMAN -->|Redis pub/sub publish| RDS[(Redis :6379<br/>channel disruptions:{company_id})]
+  RDS -->|pubsub listen| WS
+  WS -->|push event| FE
+  FE -->|Human clicks Approve/Reject| FE2[Frontend decision action<br/>frontend/lib/api.ts]
+
+  %% ========== STORAGE / AUDIT ==========
+  SVC --> PG[(Postgres :5432<br/>Disruptions/Scenarios/Decisions/Audit)]
+  EX --> AUD[AuditService.log()<br/>app/services/audit_svc.py<br/>**MUST happen before execution**]
+  AUD --> PG
+
+  %% ========== OPTIONAL SUPABASE (frontend demo wiring) ==========
+  FE2 --> SB[(Supabase Tables<br/>disruptions/scenarios/decisions/audit_logs<br/>supabase/schema.sql)]
