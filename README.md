@@ -124,6 +124,11 @@ From [frontend/package.json](frontend/package.json):
 ## AI Model Architecture Pipeline (R3FLEX)
 
 > Backend AI is implemented with **LangGraph + LangChain + Google Gemini** and a confidence-threshold human-in-the-loop execution path.
+
+
+```text
+AI Model Architecture Pipeline (R3FLEX)
+
 External Signals / Events
         |
         v
@@ -176,16 +181,21 @@ LangGraph Orchestrator (StateGraph)
 +---------------------------------------------------+
         |
         v
-        +----------------------+
-        |                      |
-        v                      v
-PostgreSQL DB          Redis Pub/Sub
-        |                      |
-        v                      v
-  Audit Logger        WebSocket Server
-        |                      |
-        v                      v
-     Storage            Frontend UI
++--------------------+        +----------------------+
+|   PostgreSQL DB    |        |     Redis Pub/Sub    |
++--------------------+        +----------------------+
+        |                               |
+        v                               v
++--------------------+        +----------------------+
+|   Audit Logger     |        |  WebSocket Server    |
++--------------------+        +----------------------+
+        |                               |
+        +---------------+---------------+
+                        |
+                        v
+                Frontend UI / Storage
+```
+
 
 ### Pipeline stages (what the “AI model” does)
 1. **Signal ingestion** (scheduler polling + manual/demo triggers)
