@@ -47,6 +47,16 @@ export function AnimatedSignUp() {
       return
     }
 
+    if (pw.length > 128) {
+      setFormError('Password is too long (max 128 characters).')
+      return
+    }
+
+    if (email.length > 254) {
+      setFormError('Email is too long.')
+      return
+    }
+
     setFormError(null)
     setFormSuccess(null)
     setIsLoading(true)
@@ -226,6 +236,7 @@ export function AnimatedSignUp() {
                       id="firstName"
                       name="firstName"
                       required
+                      maxLength={100}
                       autoComplete="given-name"
                       className={fieldBase()}
                       placeholder="Ada"
@@ -245,6 +256,7 @@ export function AnimatedSignUp() {
                       id="lastName"
                       name="lastName"
                       required
+                      maxLength={100}
                       autoComplete="family-name"
                       className={fieldBase()}
                       placeholder="Lovelace"
@@ -267,6 +279,7 @@ export function AnimatedSignUp() {
                     name="phone"
                     type="tel"
                     required
+                    maxLength={32}
                     autoComplete="tel"
                     className={fieldBase()}
                     placeholder="+91 …"
@@ -288,6 +301,7 @@ export function AnimatedSignUp() {
                     name="email"
                     type="email"
                     required
+                    maxLength={254}
                     autoComplete="email"
                     className={fieldBase()}
                     placeholder="you@company.com"
@@ -366,6 +380,7 @@ export function AnimatedSignUp() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       minLength={10}
+                      maxLength={128}
                       autoComplete="new-password"
                       className={cn(fieldBase(), 'pr-11')}
                       placeholder="At least 10 characters"
@@ -402,6 +417,7 @@ export function AnimatedSignUp() {
                       type={showConfirm ? 'text' : 'password'}
                       required
                       minLength={10}
+                      maxLength={128}
                       autoComplete="new-password"
                       className={cn(fieldBase(), 'pr-11')}
                       placeholder="Repeat password"

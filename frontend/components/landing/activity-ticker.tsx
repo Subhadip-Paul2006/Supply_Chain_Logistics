@@ -247,6 +247,10 @@ function FeedCard({ item, expanded, onActivate, onDeactivate, mode }: FeedCardPr
                 <img
                   src={item.thumbnail}
                   alt={`${item.title} news thumbnail`}
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                   className="h-32 w-full object-cover"
                 />
               </div>

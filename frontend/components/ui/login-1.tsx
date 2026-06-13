@@ -226,6 +226,7 @@ export default function LoginOne() {
             height={1000}
             priority
             alt=""
+            referrerPolicy="no-referrer"
             className="h-full w-full object-cover opacity-40 transition-transform duration-300"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-transparent" />

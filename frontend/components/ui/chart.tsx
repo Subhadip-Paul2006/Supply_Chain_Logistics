@@ -78,19 +78,45 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  // Defense in depth (I-1): restrict the chart id and key to a known-safe
+  // character set so this style block can never be coerced into something
+  // other than a CSS variable assignment even if config becomes
+  // user-influenced in the future. The values themselves are CSS-validated
+  // to a known color-format prefix list.
+  const safeId = String(id).replace(/[^a-zA-Z0-9_-]/g, '')
+  const escapeCssValue = (raw: unknown): string | null => {
+    if (typeof raw !== 'string') return null
+    const v = raw.trim()
+    if (!v) return null
+    // Allow hex, rgb(a), hsl(a), named colors (no whitespace, no `;`, no `{`,
+    // no `}`). Reject anything else outright so a malformed value can't break
+    // out of the CSS variable assignment.
+    if (
+      /^(#[0-9a-fA-F]{3,8}|rgba?\([^()]*\)|hsla?\([^()]*\)|[a-zA-Z]{1,32})$/.test(
+        v,
+      )
+    ) {
+      return v
+    }
+    return null
+  }
+
   return (
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
+${prefix} [data-chart=${safeId}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
+    // Restrict the key to a known-safe set as well.
+    const safeKey = String(key).replace(/[^a-zA-Z0-9_-]/g, '')
     const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+      escapeCssValue(
+        itemConfig.theme?.[theme as keyof typeof itemConfig.theme] as unknown,
+      ) || escapeCssValue(itemConfig.color as unknown)
+    return color ? `  --color-${safeKey}: ${color};` : null
   })
   .join('\n')}
 }

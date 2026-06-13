@@ -29,6 +29,10 @@ export function AuthSplitCollage({
           <img
             src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80"
             alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="h-full w-full object-cover opacity-90"
           />
         </div>
@@ -56,6 +60,10 @@ export function AuthSplitCollage({
           <img
             src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80"
             alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="h-full w-full object-cover opacity-90"
           />
         </div>
@@ -65,6 +73,10 @@ export function AuthSplitCollage({
           <img
             src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&q=80"
             alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="h-full w-full object-cover opacity-90"
           />
         </div>
@@ -92,6 +104,10 @@ export function AuthSplitCollage({
           <img
             src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
             alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
             className="h-full w-full object-cover opacity-90"
           />
         </div>

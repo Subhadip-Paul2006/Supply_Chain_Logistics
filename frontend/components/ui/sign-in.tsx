@@ -177,6 +177,7 @@ export function AnimatedSignIn() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    maxLength={254}
                     className={cn(
                       'block w-full rounded-md border py-3 pr-4 pl-4 text-sm focus:ring-2 focus:outline-none',
                       'border-border bg-muted/50 text-foreground placeholder:text-muted-foreground focus:ring-primary',
@@ -204,6 +205,7 @@ export function AnimatedSignIn() {
                       id="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      maxLength={128}
                       className={cn(
                         'block w-full rounded-md border py-3 pr-11 pl-4 text-sm focus:ring-2 focus:outline-none',
                         'border-border bg-muted/50 text-foreground placeholder:text-muted-foreground focus:ring-primary',

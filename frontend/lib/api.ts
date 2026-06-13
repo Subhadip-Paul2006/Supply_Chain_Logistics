@@ -1,12 +1,17 @@
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
-const COMPANY_ID = 'pharma-distrib-india'
+// ─── Security model ────────────────────────────────────────────────────────
+// Reads (fetchDisruptions, fetchPendingDecisions) still use the anon key —
+// RLS grants SELECT to anon/authenticated on the relevant tables, and these
+// are read-only queries.
+//
+// Writes (triggerDemoDisruption, approveDecision, rejectDecision) MUST go
+// through /api/* server routes. The server uses the service-role key,
+// validates the caller's JWT, and overwrites client-controlled fields like
+// `actor` and `approver_id` with values derived from the verified session.
+// (C-1, H-3, H-4 fixes — see lib/api-server.ts and app/api/*/route.ts.)
 
 type SupabaseRow = Record<string, any>
-
-function getIsoNow() {
-  return new Date().toISOString()
-}
 
 function mapScenario(row: SupabaseRow) {
   return {
@@ -96,228 +101,34 @@ export async function fetchPendingDecisions() {
   }
 }
 
+// ─── Mutations go through /api/* ───────────────────────────────────────────
+
+async function postJson(url: string, body?: unknown) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body ?? {}),
+  })
+  if (!res.ok) {
+    // Throwing the user-friendly error code only; raw server text never
+    // reaches the UI. (M-1 fix — see also lib/errors.ts.)
+    const err = (await res.json().catch(() => ({}))) as { error?: string }
+    throw new Error(err.error ?? 'request_failed')
+  }
+  return (await res.json().catch(() => ({}))) as Record<string, unknown>
+}
+
 export async function triggerDemoDisruption() {
-  const supabase = createSupabaseBrowserClient()
-  const now = getIsoNow()
-
-  const disruptionPayload = {
-    event_type: 'trade_route_disruption',
-    geography: 'Suez Canal, Egypt',
-    severity_score: 9.1,
-    raw_signal:
-      'Live port intelligence reports a Suez Canal closure with second-order rerouting pressure across the Europe lane.',
-    affected_nodes: ['chennai-mfg', 'suez-hub', 'frankfurt-dc'],
-    cascade_nodes: ['med-gateway', 'eu-distribution'],
-    status: 'detected',
-    created_at: now,
-    updated_at: now,
-  }
-
-  const { data: disruptionRows, error: disruptionError } = await supabase
-    .from('disruptions')
-    .insert(disruptionPayload)
-    .select('*')
-
-  if (disruptionError) {
-    throw new Error(disruptionError.message)
-  }
-
-  const disruption = disruptionRows?.[0]
-  if (!disruption) {
-    throw new Error('Demo disruption insert returned no rows.')
-  }
-
-  const scenarioPayloads = [
-    {
-      disruption_id: disruption.id,
-      option_index: 1,
-      label: 'Cape of Good Hope reroute',
-      description: 'Divert vessels around the Cape to avoid the Suez choke point.',
-      cost_delta_usd: 28000,
-      time_delta_days: 12,
-      risk_score: 2.4,
-      composite_score: 1.8,
-      recommended: true,
-      created_at: now,
-    },
-    {
-      disruption_id: disruption.id,
-      option_index: 2,
-      label: 'Air freight bridge',
-      description: 'Move the most urgent pharmaceutical lane by air while preserving inventory.',
-      cost_delta_usd: 85000,
-      time_delta_days: 3,
-      risk_score: 3.8,
-      composite_score: 3.9,
-      recommended: false,
-      created_at: now,
-    },
-    {
-      disruption_id: disruption.id,
-      option_index: 3,
-      label: 'Hold and monitor',
-      description: 'Pause execution and wait for new port intelligence before rerouting.',
-      cost_delta_usd: 12000,
-      time_delta_days: 6,
-      risk_score: 6.4,
-      composite_score: 5.2,
-      recommended: false,
-      created_at: now,
-    },
-  ]
-
-  const { data: scenarioRows, error: scenarioError } = await supabase
-    .from('scenarios')
-    .insert(scenarioPayloads)
-    .select('*')
-
-  if (scenarioError) {
-    throw new Error(scenarioError.message)
-  }
-
-  const recommendedScenario = (scenarioRows ?? []).find((row) => row.recommended)
-
-  const { error: decisionError } = await supabase.from('decisions').insert({
-    disruption_id: disruption.id,
-    scenario_id: recommendedScenario?.id ?? scenarioRows?.[0]?.id ?? null,
-    confidence_score: 0.74,
-    auto_executed: false,
-    human_approved: null,
-    approver_id: null,
-    status: 'pending',
-    outcome: 'Awaiting human approval in the war room.',
-    executed_at: null,
-    created_at: now,
-  })
-
-  if (decisionError) {
-    throw new Error(decisionError.message)
-  }
-
-  const auditLogs = [
-    {
-      disruption_id: disruption.id,
-      decision_id: null,
-      action_type: 'scenario_generated',
-      reasoning: 'Generated three rerouting options from the detected Suez blockage.',
-      signals_used: { news: true, weather: true, port: true },
-      confidence_score: 0.74,
-      actor: 'agent',
-      company_id: COMPANY_ID,
-      created_at: now,
-    },
-    {
-      disruption_id: disruption.id,
-      decision_id: null,
-      action_type: 'cascade_simulated',
-      reasoning: 'Modeled second-order impact across the Europe distribution network.',
-      signals_used: { news: true, weather: true, port: true },
-      confidence_score: 0.74,
-      actor: 'agent',
-      company_id: COMPANY_ID,
-      created_at: now,
-    },
-    {
-      disruption_id: disruption.id,
-      decision_id: null,
-      action_type: 'escalate_human',
-      reasoning: 'Confidence fell below the 85% threshold, so a manual approval step was queued.',
-      signals_used: { news: true, weather: true, port: true },
-      confidence_score: 0.74,
-      actor: 'agent',
-      company_id: COMPANY_ID,
-      created_at: now,
-    },
-  ]
-
-  const { error: auditError } = await supabase.from('audit_logs').insert(auditLogs)
-
-  if (auditError) {
-    throw new Error(auditError.message)
-  }
-
-  return disruption
+  // Server runs the inserts with the service-role key. The browser only
+  // sends an empty body — the server stamps actor/approver_id from the JWT.
+  return postJson('/api/demo/trigger', {})
 }
 
-async function recordDecisionAction(
-  decisionId: string,
-  approverId: string,
-  actionType: 'human_approve' | 'human_reject',
-  status: 'approved' | 'rejected',
-) {
-  const supabase = createSupabaseBrowserClient()
-  const now = getIsoNow()
-
-  const { data: decisionRows, error: decisionFetchError } = await supabase
-    .from('decisions')
-    .select('id, disruption_id')
-    .eq('id', decisionId)
-    .limit(1)
-
-  if (decisionFetchError) {
-    throw new Error(decisionFetchError.message)
-  }
-
-  const decision = decisionRows?.[0]
-  if (!decision) {
-    throw new Error('Decision not found.')
-  }
-
-  const updatePayload =
-    status === 'approved'
-      ? {
-          status: 'approved',
-          human_approved: true,
-          approver_id: approverId,
-          outcome: 'Approved by human operator in Supabase-backed workflow.',
-          executed_at: now,
-        }
-      : {
-          status: 'rejected',
-          human_approved: false,
-          approver_id: approverId,
-          outcome: 'Rejected by human operator in Supabase-backed workflow.',
-          executed_at: now,
-        }
-
-  const { error: updateError } = await supabase
-    .from('decisions')
-    .update(updatePayload)
-    .eq('id', decisionId)
-
-  if (updateError) {
-    throw new Error(updateError.message)
-  }
-
-  const { error: auditError } = await supabase.from('audit_logs').insert({
-    disruption_id: decision.disruption_id,
-    decision_id: decisionId,
-    action_type: actionType,
-    reasoning:
-      status === 'approved'
-        ? 'Human approved the recommended reroute from the dashboard.'
-        : 'Human rejected the recommended reroute from the dashboard.',
-    signals_used: { news: true, weather: true, port: true },
-    confidence_score: 0.74,
-    actor: `human:${approverId}`,
-    company_id: COMPANY_ID,
-    created_at: now,
-  })
-
-  if (auditError) {
-    throw new Error(auditError.message)
-  }
-
-  return {
-    id: decisionId,
-    ...updatePayload,
-  }
+export async function approveDecision(decisionId: string) {
+  return postJson(`/api/decisions/${encodeURIComponent(decisionId)}/approve`, {})
 }
 
-export async function approveDecision(decisionId: string, approverId: string = 'demo-user') {
-  return recordDecisionAction(decisionId, approverId, 'human_approve', 'approved')
-}
-
-export async function rejectDecision(decisionId: string, approverId: string = 'demo-user') {
-  return recordDecisionAction(decisionId, approverId, 'human_reject', 'rejected')
+export async function rejectDecision(decisionId: string) {
+  return postJson(`/api/decisions/${encodeURIComponent(decisionId)}/reject`, {})
 }

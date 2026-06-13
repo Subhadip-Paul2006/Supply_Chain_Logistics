@@ -6,7 +6,10 @@ import * as React from 'react'
 import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+// D-5: 1_000_000 ms (~16 min) let removed-but-not-yet-dismissed toasts
+// accumulate. 5_000 ms is the radix-ui default and is plenty for any real
+// user action.
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string

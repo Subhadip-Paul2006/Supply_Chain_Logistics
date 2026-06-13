@@ -36,3 +36,8 @@ __pycache__/
 # Local tooling/runtime
 .idea/
 *.log
+
+
+.settings.local.json
+.claude
+.cursor

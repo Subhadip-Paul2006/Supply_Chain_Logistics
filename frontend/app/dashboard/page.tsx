@@ -7,6 +7,7 @@ import { Warning, CheckCircle, Play, SignOut } from "@phosphor-icons/react"
 import { ApprovalModal } from "@/components/dashboard/approval-modal"
 import { fetchDisruptions, fetchPendingDecisions, triggerDemoDisruption } from "@/lib/api"
 import { createSupabaseBrowserClient } from "@/lib/supabase"
+import { sanitizeError } from "@/lib/errors"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -25,7 +26,9 @@ export default function DashboardPage() {
       const dec = await fetchPendingDecisions()
       setPendingDecisions(dec.items || [])
     } catch(e) {
-      setError(e instanceof Error ? e.message : "Failed to load dashboard data.")
+      // Never show raw PostgREST / Supabase error strings. (M-1)
+      const safe = sanitizeError(e, 'fetch dashboard data')
+      setError(safe.message)
     }
   }
 
@@ -73,7 +76,9 @@ export default function DashboardPage() {
       await triggerDemoDisruption()
       await loadData()
     } catch(e) {
-      setError(e instanceof Error ? e.message : "Failed to trigger the demo scenario.")
+      // M-1: never leak raw PostgREST errors. Log dev-only, show user-safe.
+      const safe = sanitizeError(e, 'trigger demo disruption')
+      setError(safe.message)
     }
     setLoadingDemo(false)
   }
@@ -215,11 +220,10 @@ export default function DashboardPage() {
 
       </div>
 
-      <ApprovalModal 
-         decision={selectedDecision} 
-         onClose={() => setSelectedDecision(null)} 
-         onActionCb={loadData} 
-        approverId={user?.email || user?.id || 'demo-user'}
+      <ApprovalModal
+         decision={selectedDecision}
+         onClose={() => setSelectedDecision(null)}
+         onActionCb={loadData}
       />
     </div>
   )

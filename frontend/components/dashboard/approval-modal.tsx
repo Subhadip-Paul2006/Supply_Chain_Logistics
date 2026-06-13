@@ -3,32 +3,40 @@
 import { useState } from "react"
 import { CheckCircle, XCircle, WarningCircle, Lightning } from "@phosphor-icons/react"
 import { approveDecision, rejectDecision } from "@/lib/api"
+import { sanitizeError } from "@/lib/errors"
 
-export function ApprovalModal({ decision, onClose, onActionCb, approverId }: { decision: any, onClose: () => void, onActionCb: () => void, approverId?: string }) {
+export function ApprovalModal({ decision, onClose, onActionCb }: { decision: any, onClose: () => void, onActionCb: () => void }) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   if (!decision) return null
 
   const handleApprove = async () => {
     setLoading(true)
+    setError(null)
     try {
-      await approveDecision(decision.id, approverId)
+      // Server stamps approver_id from the verified JWT; the client cannot
+      // forge an approver anymore. (C-1, H-3 fixes.)
+      await approveDecision(decision.id)
       onActionCb()
       onClose()
     } catch (e) {
-      console.error(e)
+      const safe = sanitizeError(e, 'approve decision')
+      setError(safe.message)
     }
     setLoading(false)
   }
 
   const handleReject = async () => {
     setLoading(true)
+    setError(null)
     try {
-      await rejectDecision(decision.id, approverId)
+      await rejectDecision(decision.id)
       onActionCb()
       onClose()
     } catch (e) {
-      console.error(e)
+      const safe = sanitizeError(e, 'reject decision')
+      setError(safe.message)
     }
     setLoading(false)
   }
@@ -46,6 +54,15 @@ export function ApprovalModal({ decision, onClose, onActionCb, approverId }: { d
         <div className="text-gray-300 mb-6 text-sm leading-relaxed">
           The system detected a severe disruption block in the primary network. Confidence in the autonomous scenario execution is below the 85% threshold. Please review the options and manually execute.
         </div>
+
+        {error ? (
+          <div
+            role="alert"
+            className="mb-4 rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300"
+          >
+            {error}
+          </div>
+        ) : null}
         
         <div className="space-y-4 mb-8">
            {decision.scenarios?.map((sc: any, idx: number) => (
