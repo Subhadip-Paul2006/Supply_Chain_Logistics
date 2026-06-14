@@ -71,13 +71,22 @@ export function useDisruptionsWS(companyId: string = "pharma-distrib-india") {
       }
 
       url.pathname = url.pathname.replace(/\/$/, "")
-      const fullUrl = `${url.toString()}/${encodeURIComponent(companyId)}${
-        token ? `?token=${encodeURIComponent(token)}` : ""
-      }`
-
+      const tenantPath = `${url.toString()}/${encodeURIComponent(companyId)}`
+      // SECURITY (H-6 fix): the Supabase JWT MUST NOT travel in the URL.
+      // URLs leak to proxies, browser history, server access logs, and CDN
+      // edge nodes. Instead we send it via the `Sec-WebSocket-Protocol`
+      // subprotocol header. The server is expected to verify it during the
+      // upgrade handshake and accept the connection. Browsers refuse to set
+      // arbitrary headers on a WebSocket, so this header is the only
+      // channel available. The server mirrors the same value back in the
+      // `Sec-WebSocket-Protocol` response header (per RFC 6455) so the
+      // browser accepts the subprotocol.
+      const subprotocols = token
+        ? [`bearer.${token}`]
+        : []
       if (cancelled) return
-      debugLog("Connecting to WS:", fullUrl)
-      ws.current = new WebSocket(fullUrl)
+      debugLog("Connecting to WS:", tenantPath)
+      ws.current = new WebSocket(tenantPath, subprotocols)
 
       ws.current.onopen = () => {
         if (cancelled) return

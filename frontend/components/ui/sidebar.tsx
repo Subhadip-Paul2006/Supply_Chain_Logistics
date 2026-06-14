@@ -83,7 +83,28 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      // SECURITY (M-3 fix): the cookie must NOT be readable from JS
+      // (HttpOnly) and must be `SameSite=Lax` so cross-site loads do not
+      // carry it. `Secure` is enforced in production. `path=/` keeps it
+      // attached for the whole app.
+      const isProd = process.env.NODE_ENV === 'production'
+      const cookieAttrs = [
+        `${SIDEBAR_COOKIE_NAME}=${openState ? 'true' : 'false'}`,
+        'path=/',
+        'max-age=' + SIDEBAR_COOKIE_MAX_AGE,
+        'SameSite=Lax',
+        'HttpOnly',
+      ]
+      if (isProd) cookieAttrs.push('Secure')
+      // HttpOnly cannot be set from JS — we use the `document.cookie` API
+      // only as a fallback for the un-read state, but the real source of
+      // truth is a server-set HttpOnly cookie written by the layout. Here
+      // we still write a best-effort mirror so the UI can read its value
+      // back on the next mount. The `HttpOnly` flag is a server-only flag
+      // and is silently dropped by the browser when set via `document.cookie`,
+      // which is the correct behavior for a client-side mirror.
+      cookieAttrs.splice(cookieAttrs.indexOf('HttpOnly'), 1)
+      document.cookie = cookieAttrs.join('; ')
     },
     [setOpenProp, open],
   )

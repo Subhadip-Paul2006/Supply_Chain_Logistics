@@ -4,7 +4,12 @@ import {
   getAuthenticatedUser,
   jsonError,
   serviceSupabase,
+  issueCsrfToken,
+  readCsrfFromRequest,
+  checkCsrf,
+  getCompanyIdForUser,
 } from '@/lib/api-server'
+import { enforceRateLimit, identifierForRequest } from '@/lib/rate-limit'
 
 // POST /api/demo/trigger
 // Server-side equivalent of `triggerDemoDisruption()`. The original client
@@ -12,15 +17,17 @@ import {
 // audit_logs entries with `actor: 'agent'`. Now:
 //  - the caller is identified via their JWT (not the request body),
 //  - audit logs are written by the **server** with a server-prefixed actor,
-//  - the operation requires an authenticated user.
+//  - the operation requires an authenticated user,
+//  - CSRF is enforced (H-2 fix),
+//  - per-(user+ip) rate limit is enforced (H-1 fix),
+//  - the company_id is read from the user's JWT, not hardcoded (H-3 fix).
 // (C-1, H-3, H-4 fixes.)
 
-const BodySchema = z.object({
-  // No body fields required. Adding fields would expand the surface.
-  ticket: z.string().min(1).max(64).optional(),
-})
-
-const COMPANY_ID = 'pharma-distrib-india'
+// SECURITY (M-5 fix): the previously-freeform `ticket` field has been
+// removed. It was unused on the server side and represented a potential
+// log-injection vector. If reintroduced, it must be restricted to
+// `^[A-Za-z0-9_-]{1,64}$`.
+const BodySchema = z.object({}).strict()
 
 export async function POST(request: NextRequest) {
   let body: z.infer<typeof BodySchema> = {}
@@ -35,6 +42,25 @@ export async function POST(request: NextRequest) {
   if (error || !user) {
     return jsonError(401, 'unauthenticated')
   }
+
+  // SECURITY (H-2 fix): reject any POST that does not carry a matching
+  // CSRF cookie + header pair. The double-submit pattern.
+  const { cookie, header } = await readCsrfFromRequest(request)
+  const csrfFail = checkCsrf(cookie, header)
+  if (csrfFail) return csrfFail
+
+  // SECURITY (H-1 fix): throttle per user and per IP.
+  const limited = enforceRateLimit(
+    request,
+    'demo-trigger',
+    identifierForRequest(request, user.id),
+  )
+  if (limited) return limited
+
+  // SECURITY (H-3 fix): the company_id is read from the user's JWT, not
+  // hardcoded — so a user from another tenant cannot write into the
+  // demo company just by calling this endpoint.
+  const COMPANY_ID = getCompanyIdForUser(user)
 
   const now = new Date().toISOString()
   const supabase = serviceSupabase()
@@ -133,7 +159,8 @@ export async function POST(request: NextRequest) {
     return jsonError(500, 'internal')
   }
 
-  const auditActor = `server:user:${user.email ?? user.id}`
+  // SECURITY (H-3 fix): use the immutable user UUID, not the email.
+  const auditActor = `server:user:${user.id}`
   const auditLogs = [
     {
       disruption_id: disruption.id,
@@ -176,13 +203,16 @@ export async function POST(request: NextRequest) {
     return jsonError(500, 'internal')
   }
 
-  // Echo only safe fields.
-  return NextResponse.json({
+  // Echo only safe fields. Refresh the CSRF cookie on every successful
+  // mutating response so the token stays valid for the lifetime of the
+  // session.
+  const response = NextResponse.json({
     id: disruption.id,
     event_type: disruption.event_type,
     geography: disruption.geography,
     severity_score: disruption.severity_score,
     created_at: disruption.created_at,
-    ticket: body.ticket ?? null,
   })
+  issueCsrfToken(response)
+  return response
 }

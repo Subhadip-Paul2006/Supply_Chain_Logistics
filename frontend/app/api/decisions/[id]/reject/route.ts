@@ -4,14 +4,20 @@ import {
   getAuthenticatedUser,
   jsonError,
   serviceSupabase,
+  issueCsrfToken,
+  readCsrfFromRequest,
+  checkCsrf,
+  getCompanyIdForUser,
+  buildAuditActor,
 } from '@/lib/api-server'
+import { enforceRateLimit, identifierForRequest } from '@/lib/rate-limit'
 
 const ParamsSchema = z.object({
   id: z.string().uuid({ message: 'invalid_decision_id' }),
 })
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } },
 ) {
   const parsed = ParamsSchema.safeParse(params)
@@ -24,14 +30,29 @@ export async function POST(
     return jsonError(401, 'unauthenticated')
   }
 
-  const approverId = user.email ?? user.id
+  // SECURITY (H-2 fix): CSRF.
+  const { cookie, header } = await readCsrfFromRequest(request)
+  const csrfFail = checkCsrf(cookie, header)
+  if (csrfFail) return csrfFail
+
+  // SECURITY (H-1 fix): rate limit.
+  const limited = enforceRateLimit(
+    request,
+    'decisions-reject',
+    identifierForRequest(request, user.id),
+  )
+  if (limited) return limited
+
+  // SECURITY (H-3 fix): immutable user UUID, tenant from JWT.
+  const approverId = user.id
+  const userCompanyId = getCompanyIdForUser(user)
 
   try {
     const supabase = serviceSupabase()
 
     const { data: decision, error: fetchError } = await supabase
       .from('decisions')
-      .select('id, status, disruption_id')
+      .select('id, status, disruption_id, disruption:disruptions(company_id)')
       .eq('id', parsed.data.id)
       .maybeSingle()
 
@@ -43,6 +64,17 @@ export async function POST(
     }
     if (decision.status !== 'pending') {
       return jsonError(409, 'conflict', `Decision is already ${decision.status}.`)
+    }
+
+    // SECURITY (H-3 fix): tenant-isolation gate.
+    type DecisionWithDisruption = {
+      disruption?: { company_id?: string | null } | { company_id?: string | null }[] | null
+    }
+    const d = decision as unknown as DecisionWithDisruption
+    const disruptionObj = Array.isArray(d.disruption) ? d.disruption[0] : d.disruption
+    const disruptionCompanyId = disruptionObj?.company_id
+    if (disruptionCompanyId && disruptionCompanyId !== userCompanyId) {
+      return jsonError(403, 'forbidden', 'Decision is not in your tenant.')
     }
 
     const now = new Date().toISOString()
@@ -70,8 +102,8 @@ export async function POST(
         'Human rejected the recommended reroute from the dashboard.',
       signals_used: { news: true, weather: true, port: true },
       confidence_score: 0.74,
-      actor: `server:user:${approverId}`,
-      company_id: 'pharma-distrib-india',
+      actor: buildAuditActor(approverId),
+      company_id: userCompanyId,
       created_at: now,
     })
 
@@ -79,12 +111,14 @@ export async function POST(
       return jsonError(500, 'internal')
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       id: parsed.data.id,
       status: 'rejected',
       approver_id: approverId,
       executed_at: now,
     })
+    issueCsrfToken(response)
+    return response
   } catch {
     return jsonError(500, 'internal')
   }

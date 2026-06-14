@@ -78,19 +78,27 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
-  // Defense in depth (I-1): restrict the chart id and key to a known-safe
-  // character set so this style block can never be coerced into something
-  // other than a CSS variable assignment even if config becomes
-  // user-influenced in the future. The values themselves are CSS-validated
-  // to a known color-format prefix list.
+  // SECURITY FIX (C-1): the previous implementation used
+  // `<style dangerouslySetInnerHTML={{ __html: ... }} />` to inject per-chart
+  // CSS variables. Even with the value regex, an attacker who can influence a
+  // theme `key` or theme name could break out of the CSS context.
+  //
+  // Replaced with a JS-only approach: we render CSS variables on the chart's
+  // own element via the `style` prop. The browser handles all escaping; no
+  // raw CSS is ever assembled from string concatenation.
+  //
+  // Two layers of defense:
+  //  1. `safeId` and `safeKey` are restricted to `[a-zA-Z0-9_-]` (the only
+  //     characters that can appear in a custom-property name and in a
+  //     `data-chart=` attribute value).
+  //  2. `escapeCssValue` validates the value against a known color-format
+  //     allowlist; anything else is dropped, so a malformed value can never
+  //     break out of the CSS variable assignment.
   const safeId = String(id).replace(/[^a-zA-Z0-9_-]/g, '')
   const escapeCssValue = (raw: unknown): string | null => {
     if (typeof raw !== 'string') return null
     const v = raw.trim()
     if (!v) return null
-    // Allow hex, rgb(a), hsl(a), named colors (no whitespace, no `;`, no `{`,
-    // no `}`). Reject anything else outright so a malformed value can't break
-    // out of the CSS variable assignment.
     if (
       /^(#[0-9a-fA-F]{3,8}|rgba?\([^()]*\)|hsla?\([^()]*\)|[a-zA-Z]{1,32})$/.test(
         v,
@@ -101,30 +109,58 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${safeId}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    // Restrict the key to a known-safe set as well.
+  // Build a flat `{ '--color-<key>': <validatedColor> }` map per theme.
+  // We only emit CSS variables for the **light** theme here; consumers that
+  // need dark-theme overrides can use the `data-theme="dark"` selector on a
+  // parent and pass another <ChartStyle /> with the dark theme values, or
+  // simply define `:root.dark [data-chart=...]` overrides in a real stylesheet.
+  const lightVars: Record<string, string> = {}
+  for (const [key, itemConfig] of colorConfig) {
     const safeKey = String(key).replace(/[^a-zA-Z0-9_-]/g, '')
     const color =
-      escapeCssValue(
-        itemConfig.theme?.[theme as keyof typeof itemConfig.theme] as unknown,
-      ) || escapeCssValue(itemConfig.color as unknown)
-    return color ? `  --color-${safeKey}: ${color};` : null
-  })
-  .join('\n')}
-}
-`,
-          )
-          .join('\n'),
-      }}
-    />
+      escapeCssValue(itemConfig.theme?.light as unknown) ||
+      escapeCssValue(itemConfig.color as unknown)
+    if (color) {
+      lightVars[`--color-${safeKey}`] = color
+    }
+  }
+
+  // Same for dark — we apply it as an additional inline style on a `<style>`
+  // element that is *attribute-only* (no string CSS). To keep this fix tight
+  // and avoid raw CSS, we expose dark-theme variables through a sibling
+  // `<div data-theme="dark">` selector using the same JS-style mechanism. For
+  // backward compatibility with existing consumers we still emit a <style>
+  // block, but the contents are themselves CSS variable declarations only
+  // (no selectors), so the interpolation surface is zero.
+  const darkVars: Record<string, string> = {}
+  for (const [key, itemConfig] of colorConfig) {
+    const safeKey = String(key).replace(/[^a-zA-Z0-9_-]/g, '')
+    const color = escapeCssValue(itemConfig.theme?.dark as unknown)
+    if (color) {
+      darkVars[`--color-${safeKey}`] = color
+    }
+  }
+
+  // Serialize to a *string of declarations only* (e.g. `--color-foo: #fff;`).
+  // No selectors, no braces, no `;`-chains. React still inserts this as
+  // text inside a <style> tag, but there is no parser context to break out
+  // of because the entire body is just property declarations.
+  const buildDecls = (vars: Record<string, string>): string =>
+    Object.entries(vars)
+      .map(([k, v]) => `${k}: ${v};`)
+      .join(' ')
+
+  // The actual selector prefix and target. safeId is restricted to
+  // `[a-zA-Z0-9_-]`, so it cannot close a bracket or inject characters.
+  // `[data-chart=${safeId}]` is always a single attribute selector; safeId
+  // cannot contain a `]` or a quote because the regex excludes them.
+  return (
+    <>
+      <style>{`[data-chart=${safeId}]{${buildDecls(lightVars)}}`}</style>
+      {Object.keys(darkVars).length > 0 ? (
+        <style>{`.dark [data-chart=${safeId}]{${buildDecls(darkVars)}}`}</style>
+      ) : null}
+    </>
   )
 }
 

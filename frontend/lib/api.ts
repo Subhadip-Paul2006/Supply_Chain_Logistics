@@ -1,4 +1,10 @@
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import {
+  parseDisruptionRows,
+  parseDecisionRows,
+  type DisruptionRow,
+  type DecisionRow,
+} from '@/lib/schemas'
 
 // ─── Security model ────────────────────────────────────────────────────────
 // Reads (fetchDisruptions, fetchPendingDecisions) still use the anon key —
@@ -11,61 +17,104 @@ import { createSupabaseBrowserClient } from '@/lib/supabase'
 // `actor` and `approver_id` with values derived from the verified session.
 // (C-1, H-3, H-4 fixes — see lib/api-server.ts and app/api/*/route.ts.)
 
-type SupabaseRow = Record<string, any>
-
-function mapScenario(row: SupabaseRow) {
-  return {
-    ...row,
-    name: row.label,
-    estimated_cost_usd: row.cost_delta_usd ?? null,
-    estimated_delay_days: row.time_delta_days ?? null,
-    success_confidence:
-      typeof row.composite_score === 'number'
-        ? Math.max(0.1, Math.min(0.99, 1 - row.composite_score / 10))
-        : row.recommended
-          ? 0.91
-          : 0.72,
-  }
-}
-
-export async function fetchDisruptions() {
+export async function fetchDisruptions(
+  signal?: AbortSignal,
+): Promise<{
+  items: DisruptionRow[]
+  total: number
+  page: number
+  page_size: number
+}> {
   const supabase = createSupabaseBrowserClient()
-  const { data, error, count } = await supabase
+  let query = supabase
     .from('disruptions')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
     .limit(20)
+  if (signal) query = query.abortSignal?.(signal) ?? query
+  const { data, error, count } = await query
 
   if (error) {
     throw new Error(error.message)
   }
 
+  // SECURITY (C-2 fix): validate every row at the API boundary. Items that
+  // fail the schema are dropped; a single bad row never breaks the page.
+  const items = parseDisruptionRows(data ?? [])
+
   return {
-    items: data ?? [],
-    total: count ?? data?.length ?? 0,
+    items,
+    total: count ?? items.length,
     page: 1,
     page_size: 20,
   }
 }
 
-export async function fetchPendingDecisions() {
+function mapScenario(row: Record<string, unknown>) {
+  // Coerce numeric strings from PostgREST into numbers, but never trust the
+  // shape — fall back to safe defaults.
+  const num = (v: unknown): number | null => {
+    if (typeof v === 'number') return Number.isFinite(v) ? v : null
+    if (typeof v === 'string' && v.trim() !== '') {
+      const n = Number(v)
+      return Number.isFinite(n) ? n : null
+    }
+    return null
+  }
+  const cost = num(row.cost_delta_usd)
+  const days = num(row.time_delta_days)
+  const composite = num(row.composite_score)
+  const recommended = row.recommended === true
+
+  let success_confidence: number
+  if (composite !== null) {
+    success_confidence = Math.max(0.1, Math.min(0.99, 1 - composite / 10))
+  } else if (recommended) {
+    success_confidence = 0.91
+  } else {
+    success_confidence = 0.72
+  }
+
+  return {
+    ...row,
+    name: typeof row.label === 'string' ? row.label : '',
+    estimated_cost_usd: cost,
+    estimated_delay_days: days,
+    success_confidence,
+  }
+}
+
+export async function fetchPendingDecisions(
+  signal?: AbortSignal,
+): Promise<{
+  items: DecisionRow[]
+  total: number
+  page: number
+  page_size: number
+  pending_count: number
+}> {
   const supabase = createSupabaseBrowserClient()
-  const { data: decisionRows, error, count } = await supabase
+  let query = supabase
     .from('decisions')
     .select('*', { count: 'exact' })
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
     .limit(20)
+  if (signal) query = query.abortSignal?.(signal) ?? query
+  const { data: decisionRows, error, count } = await query
 
   if (error) {
     throw new Error(error.message)
   }
 
+  // SECURITY (C-2 fix): validate decisions at the boundary.
+  const decisions = parseDecisionRows(decisionRows ?? [])
+
   const disruptionIds = Array.from(
-    new Set((decisionRows ?? []).map((row) => row.disruption_id).filter(Boolean)),
+    new Set(decisions.map((row) => row.disruption_id).filter(Boolean) as string[]),
   )
 
-  let scenariosByDisruption = new Map<string, SupabaseRow[]>()
+  let scenariosByDisruption = new Map<string, ReturnType<typeof mapScenario>[]>()
 
   if (disruptionIds.length > 0) {
     const { data: scenarioRows, error: scenarioError } = await supabase
@@ -87,7 +136,7 @@ export async function fetchPendingDecisions() {
     }
   }
 
-  const items = (decisionRows ?? []).map((decision) => ({
+  const items: DecisionRow[] = decisions.map((decision) => ({
     ...decision,
     scenarios: scenariosByDisruption.get(String(decision.disruption_id)) ?? [],
   }))
@@ -103,11 +152,37 @@ export async function fetchPendingDecisions() {
 
 // ─── Mutations go through /api/* ───────────────────────────────────────────
 
+// SECURITY (H-5 fix + M-1 fix): the browser sends a CSRF token header that
+// the server compares against the double-submit cookie. All mutations go
+// through this helper so the protection cannot be bypassed.
+const CSRF_HEADER = 'x-csrf-token'
+const CSRF_COOKIE = 'r3flex_csrf'
+
+function readCsrfCookie(): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie
+    .split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${CSRF_COOKIE}=`))
+  return match ? decodeURIComponent(match.slice(CSRF_COOKIE.length + 1)) : null
+}
+
 async function postJson(url: string, body?: unknown) {
+  const csrf = readCsrfCookie()
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      // SECURITY (H-5): include the CSRF token so the server can match it
+      // against the `r3flex_csrf` cookie. Browsers do not allow JS to read
+      // HttpOnly cookies, so this value is a non-HttpOnly *mirror* of the
+      // same secret — the classic double-submit pattern.
+      ...(csrf ? { [CSRF_HEADER]: csrf } : {}),
+    },
+    // SECURITY (M-1 fix): 30s timeout so a hung backend never freezes the
+    // browser; 401/403/5xx are still surfaced to the user.
     credentials: 'include',
+    signal: AbortSignal.timeout(30_000),
     body: JSON.stringify(body ?? {}),
   })
   if (!res.ok) {

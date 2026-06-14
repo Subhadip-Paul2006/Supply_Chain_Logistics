@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { Warning, CheckCircle, Play, SignOut } from "@phosphor-icons/react"
@@ -19,55 +19,78 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const loadData = async () => {
+  // SECURITY (L-3 fix): the original `mounted` boolean flag was racy. Two
+  // near-simultaneous `setState` calls after unmount produced a React
+  // warning, and any state-bearing effect that raced with the unmount
+  // cleanup could deliver stale data. We use a single AbortController
+  // instead — every async call attaches `signal`, and the cleanup aborts
+  // in flight. The signal is captured in a ref so the imperative
+  // `handleTriggerDemo` button (which is not part of the effect) can also
+  // bail out cleanly if the user navigates away mid-flight.
+  const loadData = useCallback(async (signal?: AbortSignal) => {
     try {
-      const d = await fetchDisruptions()
+      const d = await fetchDisruptions(signal)
+      if (signal?.aborted) return
       setDisruptions(d.items || [])
-      const dec = await fetchPendingDecisions()
+      const dec = await fetchPendingDecisions(signal)
+      if (signal?.aborted) return
       setPendingDecisions(dec.items || [])
-    } catch(e) {
+    } catch (e) {
+      if (signal?.aborted) return
       // Never show raw PostgREST / Supabase error strings. (M-1)
       const safe = sanitizeError(e, 'fetch dashboard data')
       setError(safe.message)
     }
-  }
+  }, [])
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
-    let mounted = true
+    const ac = new AbortController()
+    const { signal } = ac
 
     const initialize = async () => {
-      const { data } = await supabase.auth.getUser()
-      if (!mounted) return
+      try {
+        const { data } = await supabase.auth.getUser()
+        if (signal.aborted) return
 
-      if (!data.user) {
+        if (!data.user) {
+          router.replace('/login')
+          return
+        }
+
+        setUser(data.user)
+        setAuthReady(true)
+        await loadData(signal)
+      } catch (e) {
+        if (signal.aborted) return
+        // Defensive: if anything in here throws, do not leak the raw error
+        // to the console in production.
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.error('dashboard init failed', e)
+        }
         router.replace('/login')
-        return
       }
-
-      setUser(data.user)
-      setAuthReady(true)
-      await loadData()
     }
 
-    initialize().catch(() => router.replace('/login'))
+    void initialize()
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (signal.aborted) return
       if (!session) {
         router.replace('/login')
         return
       }
-
       setUser(session.user)
     })
 
     return () => {
-      mounted = false
+      ac.abort()
       subscription.unsubscribe()
     }
-  }, [router])
+  }, [router, loadData])
 
   const handleTriggerDemo = async () => {
     setLoadingDemo(true)
