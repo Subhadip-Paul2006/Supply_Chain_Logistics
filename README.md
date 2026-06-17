@@ -115,8 +115,8 @@ sequenceDiagram
     end
 ```
 
-### 1.3 High-Level Folder Map
 
+### 1.3 High-Level Folder Map
 ```mermaid
 graph LR
     R["R3FLEX repo"] --> FE["frontend/<br/>(Next.js 16)"]
