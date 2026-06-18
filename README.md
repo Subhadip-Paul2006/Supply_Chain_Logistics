@@ -30,8 +30,7 @@ Let's look at how each part works, step by step.
 
 Imagine you order something online. There is a **website** (frontend) where you click "track my order". The website sends a message to a **server** (backend) that does the hard work. The server checks a **database** for your order info, then sends the answer back to the website to show you. R3FLEX works the same way, but for global supply chains.
 
-### 1.1 System-Level Architecture (Mermaid)
-
+### 1.1 System-Level Architecture
 ```mermaid
 graph TB
     subgraph Browser["YOUR BROWSER"]
